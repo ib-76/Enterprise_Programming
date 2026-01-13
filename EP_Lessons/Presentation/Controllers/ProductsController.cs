@@ -23,7 +23,7 @@ namespace Presentation.Controllers
             //5. session varaiables
 
             // search in the db for products matching the keyword
-            ViewBag.Message = "no productd found " + keyword + " !";
+            ViewBag.Message = "no product " + keyword + " found !";
             
 
             // you control where the user is redirected after the method is executed
