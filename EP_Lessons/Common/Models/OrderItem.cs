@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Common.Models
 {
-    internal class OrderItem
+    public class OrderItem
     {
 
 
@@ -18,7 +18,7 @@ namespace Common.Models
         [ForeignKey("Product")]
         public int ProductFK { get; set; }
         public virtual Product Product { get; set; } //navigation property , virtual is used for lazy loading to function properly
-        public int Quntity { get; set; }
+        public int Quantity { get; set; }
 
         public double Price { get; set; }
 

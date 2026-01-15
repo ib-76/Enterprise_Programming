@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Common.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -24,7 +25,12 @@ namespace DataAccess.Context
         {
         }
 
-        public DbSet<Common.Models.Product> Products { get; set; } // Products is the table name in the database
+        public DbSet<Product> Products { get; set; } // Products is the table name in the database
+
+        public DbSet<Category> Categories { get; set; } // Categories is the table name in the database
+
+        public DbSet<Order> Orders { get; set; } // Orders is the table name in the database
+        public DbSet<OrderItem> OrderItems { get; set; } // OrderItems is the table name in the database
 
 
 

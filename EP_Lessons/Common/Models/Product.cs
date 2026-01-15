@@ -30,11 +30,11 @@ namespace Common.Models
         public double Price { get; set; }
 
         [StringLength(1000)]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         public int Stock { get; set; }
 
-        public string ImagePath { get; set; }
+        public string? ImagePath { get; set; }
 
     }
 }
