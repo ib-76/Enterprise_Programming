@@ -1,7 +1,7 @@
 using DataAccess.Context;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Presentation.Data;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +14,13 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ShoppingCartDbContext>();
 builder.Services.AddControllersWithViews();
+
+//scoped services =>  different instance per http request that is most commonly used for db context objects
+//Singleton services => one instnce to be shared by all components that require it
+// If two users request the same singleton service at the same time, they will share the same instance, which may
+// cause one user to wait until the other finishes.
+builder.Services.AddScoped(typeof(DataAccess.Repositories.ProductsRepository));
+
 
 var app = builder.Build();
 

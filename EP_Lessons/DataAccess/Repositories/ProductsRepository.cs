@@ -21,11 +21,13 @@ namespace DataAccess.Repositories
 
         // ProductsRepository class is the client class that depends on the
         // ShoppingCartDbContext class that is the service class
-        
-        public ProductsRepository(ShoppingCartDbContext myEffitientContext) {
-            myContext = myEffitientContext;  }
 
-        private  ShoppingCartDbContext myContext;
+        public ProductsRepository(ShoppingCartDbContext myEffitientContext)
+        {
+            myContext = myEffitientContext;
+        }
+
+        private ShoppingCartDbContext myContext;
 
         public void Add(Product product)
         {
@@ -58,10 +60,18 @@ namespace DataAccess.Repositories
 
         }
 
-
+        public void Delete(int id)
+        {
+            var productToDelete = Get(id);
+            if (productToDelete != null)
+            {
+                //ShoppingCartDbContext myContext = new ShoppingCartDbContext(null);
+                myContext.Products.Remove(productToDelete);
+                myContext.SaveChanges();
+            }
 
         }
-
+    }
 
 }
 //ShoppingCartDbContext myContext = new ShoppingCartDbContext(null);
