@@ -20,6 +20,7 @@ builder.Services.AddControllersWithViews();
 // If two users request the same singleton service at the same time, they will share the same instance, which may
 // cause one user to wait until the other finishes.
 builder.Services.AddScoped(typeof(DataAccess.Repositories.ProductsRepository));
+builder.Services.AddScoped(typeof(DataAccess.Repositories.CategoriesRepository));
 
 
 var app = builder.Build();

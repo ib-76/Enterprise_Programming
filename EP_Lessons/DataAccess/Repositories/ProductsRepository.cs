@@ -71,8 +71,14 @@ namespace DataAccess.Repositories
             }
 
         }
-    }
 
+
+        public IQueryable<Product> Get()
+        {
+            return myContext.Products; // Preparing but not executing Select * From Products
+        }
+
+    }
 }
 //ShoppingCartDbContext myContext = new ShoppingCartDbContext(null);
 // this is inefficient coding because a new context is created each time for each method call
