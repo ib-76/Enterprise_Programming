@@ -17,7 +17,7 @@ namespace Common.Models
 
         public int Order { get; set; }  
 
-        public IQueryable<Product> Products { get; set; } // navigation property to access a list of all products in this category 
+       
 
 
     }   

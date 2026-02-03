@@ -20,12 +20,12 @@ namespace Common.Models
        public int Id { get; set; }
 
         [StringLength(200)]
-        public string Name { get; set; }
+        public required string  Name { get; set; }
 
         [ForeignKey("Category")] //we link the two properties so at runtime; category (navigation property) is linked to CategoryFK (foreign key property). this is the lazy loading package at work
         public int  CategoryFK { get; set; }
 
-        public virtual Category Category { get; set; }  //i.e  myProduct.Category.CategoryName
+        public virtual required Category Category { get; set; }  //i.e  myProduct.Category.CategoryName navigational property
 
         public double Price { get; set; }
 

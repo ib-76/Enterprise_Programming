@@ -19,8 +19,24 @@ namespace Presentation.Controllers
             myProductsRepository = productsRepository;
         }
 
-        public IActionResult Index(int page = 1, int pageSize = 6)
+        public IActionResult Index(int page = 1, int pageSize = 9)
         {//the term models is used for object types that transport data to/from views to/from the controller
+         // info 1: List of categories
+            var myPreparedSqlofCategories = myCategoriesRepository.GetAllCategories();
+            
+
+
+            if (TempData["keyword"] != null || TempData["category"] != null)
+            {
+                //it means that next was pressed in search mode
+                string keyword = TempData["keyword"] != null ? TempData["keyword"].ToString() : "";
+                int category = TempData["category"] != null ? Convert.ToInt32(TempData["category"]) : -1;
+
+
+                return Search(keyword, category, page, pageSize);
+            }
+
+            //info2 : list of products 
             var list = myProductsRepository.Get().Skip((page-1)*pageSize).Take(pageSize); 
             ViewBag.CurrentPage = page;
             ViewBag.TotalItemsFetched = list.Count();
@@ -79,7 +95,7 @@ namespace Presentation.Controllers
         //3. Model Binding
 }
         [HttpPost]
-        public IActionResult Search (string keyword)
+        public IActionResult Search (string keyword,int category, int page = 1, int pageSize = 9)
         {
             // note : ways of passing data from controller => view
             //1. Viewbag ; dynamic object,whatever i store inside doesnn't survive redirect
@@ -90,28 +106,49 @@ namespace Presentation.Controllers
 
             // search in the db for products matching the keyword
 
+           
+       
+                
 
 
+                //Notes on defferre executioon ( ie using the IQueryble)
+                // get() => 1st call
+                // where() => 2nd call
+                // OrderBy() +> 3rd call
 
-            //Notes on defferre executioon ( ie using the IQueryble)
-            // get() => 1st call
-            // where() => 2nd call
-            // OrderBy() +> 3rd call
-
-            //because of IQueryable()
-            //after 1st call => Select * From Products
-            //after 2ndt call = Select * From Products Where Name likje '%keyword5' or Description Like '%description%'
-            //after 3rd call = Select * From Products Where Name likje '%keyword5' or Description Like '%description%' OrderBy Name 
-           var List = myProductsRepository.Get().Where(p => p.Name.Contains(keyword)
+                //because of IQueryable()
+                //after 1st call => Select * From Products
+                //after 2ndt call = Select * From Products Where Name likje '%keyword5' or Description Like '%description%'
+                //after 3rd call = Select * From Products Where Name likje '%keyword5' or Description Like '%description%' OrderBy Name 
+                var List = myProductsRepository.Get().Where(p => p.Name.Contains(keyword)
                                         || p.Description.Contains(keyword))
-                .OrderBy(p => p.Name).ToList();
-            
+                .OrderBy(p => p.Name).Skip((page - 1) * pageSize).Take(pageSize).ToList();
+                ViewBag.CurrentPage = page;
+                ViewBag.TotalItemsFetched = List.Count();
+                ViewBag.PageSize = pageSize;
 
-            // you control where the user is redirected after the method is executed
-            // by default it will look for a view with the same name as the method when you use return View(); ie products/search.cshtml
-            // tp redirect to another action method use return View("name of the view");
-            return View("Index" , List );
-            
+
+                // you control where the user is redirected after the method is executed
+                // by default it will look for a view with the same name as the method when you use return View(); ie products/search.cshtml
+                // tp redirect to another action method use return View("name of the view");
+                return View("Index" , List );
+           
+        }
+
+        public IActionResult Details(int id)
+        {
+            var product = myProductsRepository.Get(id);
+            if (product == null)
+            {
+                TempData["error"] = "Product does not exist!";
+                return RedirectToAction("Index");
+            }
+            else return View(product);
+
+            //this will redirect the end user
+
+
+
         }
        
     }

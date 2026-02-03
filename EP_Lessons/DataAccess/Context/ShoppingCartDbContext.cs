@@ -33,7 +33,13 @@ namespace DataAccess.Context
         public DbSet<OrderItem> OrderItems { get; set; } // OrderItems is the table name in the database
 
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            //lazy loading => loads the data in the nacigational properties automatically
 
+            optionsBuilder.UseLazyLoadingProxies();
+            base.OnConfiguring(optionsBuilder);
+        }
 
 
 
