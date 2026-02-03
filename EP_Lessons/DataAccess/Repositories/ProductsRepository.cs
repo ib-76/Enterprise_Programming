@@ -78,6 +78,25 @@ namespace DataAccess.Repositories
             return myContext.Products; // Preparing but not executing Select * From Products
         }
 
+
+
+        public void Update(Product updatedProduct)
+        {
+
+            var originalProduct = Get(updatedProduct.Id);
+            if (originalProduct != null)
+            {
+                originalProduct.Name = updatedProduct.Name;
+                originalProduct.Price = updatedProduct.Price;
+                originalProduct.CategoryFK = updatedProduct.CategoryFK;
+                originalProduct.ImagePath = updatedProduct.ImagePath;
+                originalProduct.Description = updatedProduct.Description;
+                originalProduct.Stock = updatedProduct.Stock;
+
+                myContext.SaveChanges();
+            }
+
+        }
     }
 }
 //ShoppingCartDbContext myContext = new ShoppingCartDbContext(null);

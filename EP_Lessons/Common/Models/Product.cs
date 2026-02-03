@@ -16,11 +16,15 @@ namespace Common.Models
     //mopdels mus tbe named in singular form and pascal case eg ProductName, Category , CustomerOrder
     public class Product
     {
+        public Product()
+        { Stock = 1; }
+
         [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]
        public int Id { get; set; }
 
         [StringLength(200)]
-        public required string  Name { get; set; }
+        [Required]
+        public  string  Name { get; set; }
 
         [ForeignKey("Category")] //we link the two properties so at runtime; category (navigation property) is linked to CategoryFK (foreign key property). this is the lazy loading package at work
         public int  CategoryFK { get; set; }

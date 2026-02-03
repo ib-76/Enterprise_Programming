@@ -1,8 +1,7 @@
 ﻿using Common.Models;
-using DataAccess.Context;
 using DataAccess.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.AspNetCore.Mvc.Diagnostics;
 using Presentation.Models;
 
 
@@ -20,11 +19,7 @@ namespace Presentation.Controllers
         }
 
         public IActionResult Index(int page = 1, int pageSize = 9)
-        {//the term models is used for object types that transport data to/from views to/from the controller
-         // info 1: List of categories
-            var myPreparedSqlofCategories = myCategoriesRepository.GetAllCategories();
-            
-
+        {
 
             if (TempData["keyword"] != null || TempData["category"] != null)
             {
@@ -36,14 +31,23 @@ namespace Presentation.Controllers
                 return Search(keyword, category, page, pageSize);
             }
 
+            //the term models is used for object types that transport data to/from views to/from the controller
+            // info 1: List of categories
+            var list = myProductsRepository.Get().Skip((page - 1) * pageSize).Take(pageSize);
+
+            var myPreparedSqlofCategories = myCategoriesRepository.GetAllCategories();
+            ProductsListViewModel myModel = new ProductsListViewModel();
+            myModel.Products = list.ToList();
+            myModel.Categories = myPreparedSqlofCategories.ToList();
+
             //info2 : list of products 
-            var list = myProductsRepository.Get().Skip((page-1)*pageSize).Take(pageSize); 
+            
             ViewBag.CurrentPage = page;
             ViewBag.TotalItemsFetched = list.Count();
             ViewBag.PageSize = pageSize;
 
 
-            return View(list);
+              return View(myModel); //model: IQueryable<Product>
         }
 
 
@@ -61,25 +65,54 @@ namespace Presentation.Controllers
         //7.response < data
 
         [HttpGet]
-        public IActionResult Create()
+        public IActionResult Create()//this is triggered upon the user clicks the link Create
         {
             var myPreparedSqlofCategories =myCategoriesRepository.GetAllCategories();
 
             ProductsCreateViewModel myModel= new ProductsCreateViewModel ();
-            myModel.Categories = myPreparedSqlofCategories.ToList();
+            myModel.Categories = myPreparedSqlofCategories.ToList();//opens connection - gets data - closes connection
 
 
             return View(myModel); //mvc will return a view from the folder VIEW which shpuld have a subfolder named Products and inside it a view named Create.cshtml
         }
 
+
+
+        //to explain:
+
+        //what happens when there's an error ...redirection!
+        //validations
+        //revise registration of CategoriesRepository....
+
+
+
         [HttpPost]
-        public IActionResult Submit(ProductsCreateViewModel p){ // model binding in action ...method injecting the repository via method injection
-        try
-        {
-            //add the product keyed in by the user to the db NOTE NO LINQ code here
-            myProductsRepository.Add(p.Product);
+        public IActionResult Submit(ProductsCreateViewModel p, [FromServices] IWebHostEnvironment host){ // model binding in action ...method injecting the repository via method injection
+            try
+            {
+                if (p.ImageFile != null)
+                {
+                    string uniqueFilename = Guid.NewGuid() + System.IO.Path.GetExtension(p.ImageFile.FileName);
+                    //by default we save the physical file using the absolute path  \\G:\Enterprise Programming\Enterpise_Programming\EP_Lessons\Presentation\wwwroot\
+
+                    string absolutePath = host.WebRootPath + "//images//"+ uniqueFilename;
+
+                    using (var fileStream = new FileStream(absolutePath, FileMode.CreateNew, FileAccess.Write))
+                    {
+                        p.ImageFile.CopyTo(fileStream);
+
+                    }
+                    //relative path is used to render images in the browser
+                    string relativePath = @"\images\" + uniqueFilename;
+                    p.Product.ImagePath = relativePath;
+
+                }
+                 //add the product keyed in by the user to the db NOTE NO LINQ code here
+                myProductsRepository.Add(p.Product);
             TempData["success"] = "Product added successfully!";
-            return View("Index"); // this redirect was necessay because the method name is Submit not Create  .. server-side redirection
+
+            //return View("Index"); // this redirect was necessay because the method name is Submit not Create  .. server-side redirection
+            return RedirectToAction("Index");
             //return RedirectToAxction("index")           // client-side redirection ....viewbag wont work but tempdata will work
             }
             catch (Exception ex)
@@ -87,6 +120,10 @@ namespace Presentation.Controllers
         TempData["error"] = "Product failed to be added";
             return View("Create");
             }
+
+
+
+
 
 
         // note: ways of passing data from view => controller
@@ -106,50 +143,71 @@ namespace Presentation.Controllers
 
             // search in the db for products matching the keyword
 
-           
-       
-                
 
 
-                //Notes on defferre executioon ( ie using the IQueryble)
-                // get() => 1st call
-                // where() => 2nd call
-                // OrderBy() +> 3rd call
-
-                //because of IQueryable()
-                //after 1st call => Select * From Products
-                //after 2ndt call = Select * From Products Where Name likje '%keyword5' or Description Like '%description%'
-                //after 3rd call = Select * From Products Where Name likje '%keyword5' or Description Like '%description%' OrderBy Name 
-                var List = myProductsRepository.Get().Where(p => p.Name.Contains(keyword)
-                                        || p.Description.Contains(keyword))
-                .OrderBy(p => p.Name).Skip((page - 1) * pageSize).Take(pageSize).ToList();
-                ViewBag.CurrentPage = page;
-                ViewBag.TotalItemsFetched = List.Count();
-                ViewBag.PageSize = pageSize;
 
 
-                // you control where the user is redirected after the method is executed
-                // by default it will look for a view with the same name as the method when you use return View(); ie products/search.cshtml
-                // tp redirect to another action method use return View("name of the view");
-                return View("Index" , List );
-           
+
+            //Notes on defferre executioon ( ie using the IQueryble)
+            // get() => 1st call
+            // where() => 2nd call
+            // OrderBy() +> 3rd call
+
+            //because of IQueryable()
+            //after 1st call => Select * From Products
+            //after 2nd call => Select * From Products Where Name like '%keyword%' or Description Like '%description%'
+            //after 3rd call => Select * From Products Where Name like '%keyword%' or Description Like '%description%' order by Name asc
+            if (keyword == null) keyword = "";
+
+            var list = myProductsRepository.Get().Where(p => p.Name.Contains(keyword)
+                                                 || p.Description.Contains(keyword)
+                                                  );
+
+            if (category > 0) list = list.Where(x => x.CategoryFK == category);
+
+            list = list.OrderBy(p => p.Name).Skip((page - 1) * pageSize).Take(pageSize);
+
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalItemsFetched = list.Count();
+            ViewBag.PageSize = pageSize;
+
+
+            //YOU control where the user is redirected after the method completes
+
+            //info 1: list of categories
+            var myPreparedSqlOfCategories = myCategoriesRepository.GetAllCategories();
+            ProductsListViewModel myModel = new ProductsListViewModel();
+            myModel.Products = list.ToList();
+
+            myModel.Categories = myPreparedSqlOfCategories.ToList();
+
+
+            TempData["keyword"] = keyword;
+            TempData["category"] = category;
+
+            return View("Index", myModel);
+            //by default => View() it will seek a View called same as the action name i.e. Products\Search.cshtml
+            //to redirect the user to a different-named view we use return View("nameOfTheOtherView");
+
+
         }
 
         public IActionResult Details(int id)
         {
             var product = myProductsRepository.Get(id);
+
             if (product == null)
             {
-                TempData["error"] = "Product does not exist!";
-                return RedirectToAction("Index");
+                TempData["error"] = "Product does not exist";
+                return RedirectToAction("Index"); 
             }
             else return View(product);
 
-            //this will redirect the end user
+            //it will redirect the end user to the action (above) called Index
 
 
 
         }
-       
+
     }
 }

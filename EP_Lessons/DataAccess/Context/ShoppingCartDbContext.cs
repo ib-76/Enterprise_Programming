@@ -35,10 +35,9 @@ namespace DataAccess.Context
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            //lazy loading => loads the data in the nacigational properties automatically
+            //lazy loading => loads the data in the navigational properties automatically
 
             optionsBuilder.UseLazyLoadingProxies();
-            base.OnConfiguring(optionsBuilder);
         }
 
 
