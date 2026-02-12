@@ -2,6 +2,7 @@
 using DataAccess.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Diagnostics;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Presentation.Models;
 
 
@@ -10,9 +11,9 @@ namespace Presentation.Controllers
     public class ProductsController : Controller
     {
 
-        private CategoriesRepository  myCategoriesRepository;
-        private ProductsRepository  myProductsRepository;
-        public ProductsController(CategoriesRepository efficientCategoriesRepository , ProductsRepository productsRepository ) //requesting an instance of Categories Repository via constructor injection
+        private CategoriesRepository myCategoriesRepository;
+        private ProductsRepository myProductsRepository;
+        public ProductsController(CategoriesRepository efficientCategoriesRepository, ProductsRepository productsRepository) //requesting an instance of Categories Repository via constructor injection
         {
             myCategoriesRepository = efficientCategoriesRepository;
             myProductsRepository = productsRepository;
@@ -41,13 +42,13 @@ namespace Presentation.Controllers
             myModel.Categories = myPreparedSqlofCategories.ToList();
 
             //info2 : list of products 
-            
+
             ViewBag.CurrentPage = page;
             ViewBag.TotalItemsFetched = list.Count();
             ViewBag.PageSize = pageSize;
 
 
-              return View(myModel); //model: IQueryable<Product>
+            return View(myModel); //model: IQueryable<Product>
         }
 
 
@@ -67,9 +68,9 @@ namespace Presentation.Controllers
         [HttpGet]
         public IActionResult Create()//this is triggered upon the user clicks the link Create
         {
-            var myPreparedSqlofCategories =myCategoriesRepository.GetAllCategories();
+            var myPreparedSqlofCategories = myCategoriesRepository.GetAllCategories();
 
-            ProductsCreateViewModel myModel= new ProductsCreateViewModel ();
+            ProductsCreateViewModel myModel = new ProductsCreateViewModel();
             myModel.Categories = myPreparedSqlofCategories.ToList();//opens connection - gets data - closes connection
 
 
@@ -87,7 +88,8 @@ namespace Presentation.Controllers
 
 
         [HttpPost]
-        public IActionResult Submit(ProductsCreateViewModel p, [FromServices] IWebHostEnvironment host){ // model binding in action ...method injecting the repository via method injection
+        public IActionResult Submit(ProductsCreateViewModel p, [FromServices] IWebHostEnvironment host)
+        { // model binding in action ...method injecting the repository via method injection
             try
             {
                 if (p.ImageFile != null)
@@ -95,7 +97,7 @@ namespace Presentation.Controllers
                     string uniqueFilename = Guid.NewGuid() + System.IO.Path.GetExtension(p.ImageFile.FileName);
                     //by default we save the physical file using the absolute path  \\G:\Enterprise Programming\Enterpise_Programming\EP_Lessons\Presentation\wwwroot\
 
-                    string absolutePath = host.WebRootPath + "//images//"+ uniqueFilename;
+                    string absolutePath = host.WebRootPath + "//images//" + uniqueFilename;
 
                     using (var fileStream = new FileStream(absolutePath, FileMode.CreateNew, FileAccess.Write))
                     {
@@ -107,18 +109,19 @@ namespace Presentation.Controllers
                     p.Product.ImagePath = relativePath;
 
                 }
-                 //add the product keyed in by the user to the db NOTE NO LINQ code here
+                //add the product keyed in by the user to the db NOTE NO LINQ code here
                 myProductsRepository.Add(p.Product);
-            TempData["success"] = "Product added successfully!";
+                TempData["success"] = "Product added successfully!";
 
-            //return View("Index"); // this redirect was necessay because the method name is Submit not Create  .. server-side redirection
-            return RedirectToAction("Index");
-            //return RedirectToAxction("index")           // client-side redirection ....viewbag wont work but tempdata will work
+                //return View("Index"); // this redirect was necessay because the method name is Submit not Create  .. server-side redirection
+                return RedirectToAction("Index");
+                //return RedirectToAxction("index")           // client-side redirection ....viewbag wont work but tempdata will work
             }
             catch (Exception ex)
-        {
-        TempData["error"] = "Product failed to be added";
-            return View("Create");
+            {
+
+                TempData["error"] = "Product failed to be added";
+                return View("Create");
             }
 
 
@@ -126,13 +129,13 @@ namespace Presentation.Controllers
 
 
 
-        // note: ways of passing data from view => controller
-        //1.Parameters  
-        //2. FormCollection
-        //3. Model Binding
-}
+            // note: ways of passing data from view => controller
+            //1.Parameters  
+            //2. FormCollection
+            //3. Model Binding
+        }
         [HttpPost]
-        public IActionResult Search (string keyword,int category, int page = 1, int pageSize = 9)
+        public IActionResult Search(string keyword, int category, int page = 1, int pageSize = 9)
         {
             // note : ways of passing data from controller => view
             //1. Viewbag ; dynamic object,whatever i store inside doesnn't survive redirect
@@ -199,7 +202,7 @@ namespace Presentation.Controllers
             if (product == null)
             {
                 TempData["error"] = "Product does not exist";
-                return RedirectToAction("Index"); 
+                return RedirectToAction("Index");
             }
             else return View(product);
 
@@ -209,5 +212,91 @@ namespace Presentation.Controllers
 
         }
 
-    }
+        public IActionResult Edit(int? productId)
+        {
+            if (productId <= 0 || productId == null)
+            {
+                TempData["error"] = "Invalid Product ID";
+                return RedirectToAction("Index");
+            }
+            else
+            {
+
+                var product = myProductsRepository.Get(productId.Value);
+                if (productId == null)
+                {
+                    TempData["error"] = "Invalid request";
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    var originalProduct = myProductsRepository.Get(productId.Value);
+                    if (originalProduct == null)
+                    {
+                        TempData["error"] = "Product not found";
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+
+                        var myPreparedSqlofCategories = myCategoriesRepository.GetAllCategories();
+
+                        ProductsCreateViewModel myModel = new ProductsCreateViewModel(); // same createview model still was used here  becauase it edit data has same functionality as create data
+                        myModel.Categories = myPreparedSqlofCategories.ToList();//opens connection - gets data - closes connection
+                        myModel.Product = originalProduct; // prepopulate the form with existing data
+
+                        return View(myModel); // MEANS => IS GOING TO LOOK FOR A PAGE NAMED EDIIT.CSHTML
+
+                        
+                    }
+
+                }
+            }
+        }
+
+        [HttpPost]
+        public IActionResult Update(ProductsCreateViewModel p, [FromServices] IWebHostEnvironment host)
+        { 
+            try
+            {
+                if (p.ImageFile != null)
+                {
+                    string uniqueFilename = Guid.NewGuid() + System.IO.Path.GetExtension(p.ImageFile.FileName);
+                    //by default we save the physical file using the absolute path  \\G:\Enterprise Programming\Enterpise_Programming\EP_Lessons\Presentation\wwwroot\
+
+                    string absolutePath = host.WebRootPath + "//images//" + uniqueFilename;
+
+                    using (var fileStream = new FileStream(absolutePath, FileMode.CreateNew, FileAccess.Write))
+                    {
+                        p.ImageFile.CopyTo(fileStream);
+
+                    }
+                    //relative path is used to render images in the browser
+                    string relativePath = @"\images\" + uniqueFilename;
+                    p.Product.ImagePath = relativePath;
+                    //delete the old image from server
+                    var myOldProduct = myProductsRepository.Get(p.Product.Id);
+                    string absolutePathOfOldImage = host.WebRootPath + myOldProduct.ImagePath;
+
+                    System.IO.File.Delete(absolutePathOfOldImage);
+
+                }
+                //add the product keyed in by the user to the db NOTE NO LINQ code here
+                myProductsRepository.Update(p.Product);
+                TempData["success"] = "Product was updated successfully!";
+
+                //return View("Index"); // this redirect was necessay because the method name is Submit not Create  .. server-side redirection
+                return RedirectToAction("Index");
+                //return RedirectToAxction("index")           // client-side redirection ....viewbag wont work but tempdata will work
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = "Product failed to update";
+                return RedirectToAction ("Edit", new { productId =p.Product});
+            }
+
+        }
+
+        }
+
 }
