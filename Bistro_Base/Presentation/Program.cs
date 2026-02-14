@@ -1,28 +1,18 @@
-using DataAccess.Context;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-
+using Presentation.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-builder.Services.AddDbContext<ShoppingCartDbContext>(options =>
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ShoppingCartDbContext>();
+    .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
-
-//scoped services =>  different instance per http request that is most commonly used for db context objects
-//Singleton services => one instnce to be shared by all components that require it
-// If two users request the same singleton service at the same time, they will share the same instance, which may
-// cause one user to wait until the other finishes.
-builder.Services.AddScoped(typeof(DataAccess.Repositories.ProductsRepository));
-builder.Services.AddScoped(typeof(DataAccess.Repositories.CategoriesRepository));
-
-
 
 var app = builder.Build();
 
@@ -47,7 +37,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");// https://localhost:xxxx/Products/Index
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
 
 app.Run();

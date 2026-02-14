@@ -1,6 +1,5 @@
 namespace Presentation.Models
 {
-    // This class represents the model for error views in the application.
     public class ErrorViewModel
     {
         public string? RequestId { get; set; }
