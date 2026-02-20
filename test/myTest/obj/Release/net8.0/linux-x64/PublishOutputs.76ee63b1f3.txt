@@ -1,0 +1,7 @@
+G:\Enterprise Programming\Enterpise_Programming\test\myTest\obj\Release\net8.0\linux-x64\PubTmp\Out\myTest
+G:\Enterprise Programming\Enterpise_Programming\test\myTest\obj\Release\net8.0\linux-x64\PubTmp\Out\appsettings.Development.json
+G:\Enterprise Programming\Enterpise_Programming\test\myTest\obj\Release\net8.0\linux-x64\PubTmp\Out\appsettings.json
+G:\Enterprise Programming\Enterpise_Programming\test\myTest\obj\Release\net8.0\linux-x64\PubTmp\Out\myTest.dll
+G:\Enterprise Programming\Enterpise_Programming\test\myTest\obj\Release\net8.0\linux-x64\PubTmp\Out\myTest.deps.json
+G:\Enterprise Programming\Enterpise_Programming\test\myTest\obj\Release\net8.0\linux-x64\PubTmp\Out\myTest.runtimeconfig.json
+G:\Enterprise Programming\Enterpise_Programming\test\myTest\obj\Release\net8.0\linux-x64\PubTmp\Out\myTest.pdb

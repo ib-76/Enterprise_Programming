@@ -21,7 +21,7 @@ namespace Common.Models
 
         public double FinalPrice { get; set; } 
 
-        public virtual IQueryable<OrderItem> OrderItems { get; set; } //navigation property to access all order items in this order
+        public virtual List<OrderItem> OrderItems { get; set; } //navigation property to access all order items in this order
 
     }
 }

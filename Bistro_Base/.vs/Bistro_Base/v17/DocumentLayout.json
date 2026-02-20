@@ -3,12 +3,28 @@
   "WorkspaceRootPath": "G:\\Enterprise Programming\\Enterpise_Programming\\Bistro_Base\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{3B2B2926-DEB9-4B0D-BB43-73BE12E96E42}|DataAccess\\DataAccess.csproj|g:\\enterprise programming\\enterpise_programming\\bistro_base\\dataaccess\\class1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{3B2B2926-DEB9-4B0D-BB43-73BE12E96E42}|DataAccess\\DataAccess.csproj|solutionrelative:dataaccess\\class1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{B03CC0D4-0FE0-455B-98FF-4E21CB2E371C}|Presentation\\Presentation.csproj|g:\\enterprise programming\\enterpise_programming\\bistro_base\\presentation\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{B03CC0D4-0FE0-455B-98FF-4E21CB2E371C}|Presentation\\Presentation.csproj|solutionrelative:presentation\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{527C3D51-5DB6-4FD3-AD48-E935AACCA8A4}|Common\\Common.csproj|g:\\enterprise programming\\enterpise_programming\\bistro_base\\common\\class1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{527C3D51-5DB6-4FD3-AD48-E935AACCA8A4}|Common\\Common.csproj|solutionrelative:common\\class1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{B03CC0D4-0FE0-455B-98FF-4E21CB2E371C}|Presentation\\Presentation.csproj|g:\\enterprise programming\\enterpise_programming\\bistro_base\\presentation\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B03CC0D4-0FE0-455B-98FF-4E21CB2E371C}|Presentation\\Presentation.csproj|solutionrelative:presentation\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B03CC0D4-0FE0-455B-98FF-4E21CB2E371C}|Presentation\\Presentation.csproj|g:\\enterprise programming\\enterpise_programming\\bistro_base\\presentation\\dbseeder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B03CC0D4-0FE0-455B-98FF-4E21CB2E371C}|Presentation\\Presentation.csproj|solutionrelative:presentation\\dbseeder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{527C3D51-5DB6-4FD3-AD48-E935AACCA8A4}|Common\\Common.csproj|g:\\enterprise programming\\enterpise_programming\\bistro_base\\common\\models\\menuitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{527C3D51-5DB6-4FD3-AD48-E935AACCA8A4}|Common\\Common.csproj|solutionrelative:common\\models\\menuitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{527C3D51-5DB6-4FD3-AD48-E935AACCA8A4}|Common\\Common.csproj|g:\\enterprise programming\\enterpise_programming\\bistro_base\\common\\models\\restaurant.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{527C3D51-5DB6-4FD3-AD48-E935AACCA8A4}|Common\\Common.csproj|solutionrelative:common\\models\\restaurant.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3B2B2926-DEB9-4B0D-BB43-73BE12E96E42}|DataAccess\\DataAccess.csproj|g:\\enterprise programming\\enterpise_programming\\bistro_base\\dataaccess\\context\\cataloguedbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3B2B2926-DEB9-4B0D-BB43-73BE12E96E42}|DataAccess\\DataAccess.csproj|solutionrelative:dataaccess\\context\\cataloguedbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,7 +34,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 5,
           "Children": [
             {
               "$type": "Bookmark",
@@ -29,34 +45,79 @@
               "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
             },
             {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "CatalogueDbContext.cs",
+              "DocumentMoniker": "G:\\Enterprise Programming\\Enterpise_Programming\\Bistro_Base\\DataAccess\\Context\\CatalogueDbContext.cs",
+              "RelativeDocumentMoniker": "DataAccess\\Context\\CatalogueDbContext.cs",
+              "ToolTip": "G:\\Enterprise Programming\\Enterpise_Programming\\Bistro_Base\\DataAccess\\Context\\CatalogueDbContext.cs",
+              "RelativeToolTip": "DataAccess\\Context\\CatalogueDbContext.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-14T19:25:14.892Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Class1.cs",
-              "DocumentMoniker": "G:\\Enterprise Programming\\Enterpise_Programming\\Bistro_Base\\DataAccess\\Class1.cs",
-              "RelativeDocumentMoniker": "DataAccess\\Class1.cs",
-              "ToolTip": "G:\\Enterprise Programming\\Enterpise_Programming\\Bistro_Base\\DataAccess\\Class1.cs",
-              "RelativeToolTip": "DataAccess\\Class1.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 2,
+              "Title": "DbSeeder.cs",
+              "DocumentMoniker": "G:\\Enterprise Programming\\Enterpise_Programming\\Bistro_Base\\Presentation\\DbSeeder.cs",
+              "RelativeDocumentMoniker": "Presentation\\DbSeeder.cs",
+              "ToolTip": "G:\\Enterprise Programming\\Enterpise_Programming\\Bistro_Base\\Presentation\\DbSeeder.cs",
+              "RelativeToolTip": "Presentation\\DbSeeder.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAhAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-14T08:01:34.215Z",
+              "WhenOpened": "2026-02-15T06:35:49.545Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "Class1.cs",
-              "DocumentMoniker": "G:\\Enterprise Programming\\Enterpise_Programming\\Bistro_Base\\Common\\Class1.cs",
-              "RelativeDocumentMoniker": "Common\\Class1.cs",
-              "ToolTip": "G:\\Enterprise Programming\\Enterpise_Programming\\Bistro_Base\\Common\\Class1.cs",
-              "RelativeToolTip": "Common\\Class1.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Title": "Program.cs",
+              "DocumentMoniker": "G:\\Enterprise Programming\\Enterpise_Programming\\Bistro_Base\\Presentation\\Program.cs",
+              "RelativeDocumentMoniker": "Presentation\\Program.cs",
+              "ToolTip": "G:\\Enterprise Programming\\Enterpise_Programming\\Bistro_Base\\Presentation\\Program.cs",
+              "RelativeToolTip": "Presentation\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACkAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-14T08:00:53.296Z",
+              "WhenOpened": "2026-02-14T19:30:39.842Z",
               "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "G:\\Enterprise Programming\\Enterpise_Programming\\Bistro_Base\\Presentation\\appsettings.json",
+              "RelativeDocumentMoniker": "Presentation\\appsettings.json",
+              "ToolTip": "G:\\Enterprise Programming\\Enterpise_Programming\\Bistro_Base\\Presentation\\appsettings.json",
+              "RelativeToolTip": "Presentation\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-02-14T22:03:41.377Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Restaurant.cs",
+              "DocumentMoniker": "G:\\Enterprise Programming\\Enterpise_Programming\\Bistro_Base\\Common\\Models\\Restaurant.cs",
+              "RelativeDocumentMoniker": "Common\\Models\\Restaurant.cs",
+              "ToolTip": "G:\\Enterprise Programming\\Enterpise_Programming\\Bistro_Base\\Common\\Models\\Restaurant.cs",
+              "RelativeToolTip": "Common\\Models\\Restaurant.cs",
+              "ViewState": "AgIAAAsAAAAAAAAAAAAxwBUAAAAcAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-14T10:34:50.346Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "MenuItem.cs",
+              "DocumentMoniker": "G:\\Enterprise Programming\\Enterpise_Programming\\Bistro_Base\\Common\\Models\\MenuItem.cs",
+              "RelativeDocumentMoniker": "Common\\Models\\MenuItem.cs",
+              "ToolTip": "G:\\Enterprise Programming\\Enterpise_Programming\\Bistro_Base\\Common\\Models\\MenuItem.cs",
+              "RelativeToolTip": "Common\\Models\\MenuItem.cs",
+              "ViewState": "AgIAAAoAAAAAAAAAAAAYwBMAAAAsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-14T10:37:05.131Z"
             }
           ]
         }

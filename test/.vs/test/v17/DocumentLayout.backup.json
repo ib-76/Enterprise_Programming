@@ -1,0 +1,79 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "G:\\Enterprise Programming\\Enterpise_Programming\\test\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{69CB04BA-6EC2-4653-B61E-B341C6AC042B}|myTest\\myTest.csproj|g:\\enterprise programming\\enterpise_programming\\test\\mytest\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{69CB04BA-6EC2-4653-B61E-B341C6AC042B}|myTest\\myTest.csproj|solutionrelative:mytest\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{69CB04BA-6EC2-4653-B61E-B341C6AC042B}|myTest\\myTest.csproj|g:\\enterprise programming\\enterpise_programming\\test\\mytest\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{69CB04BA-6EC2-4653-B61E-B341C6AC042B}|myTest\\myTest.csproj|solutionrelative:mytest\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{69CB04BA-6EC2-4653-B61E-B341C6AC042B}|myTest\\myTest.csproj|g:\\enterprise programming\\enterpise_programming\\test\\mytest\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{69CB04BA-6EC2-4653-B61E-B341C6AC042B}|myTest\\myTest.csproj|solutionrelative:mytest\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "G:\\Enterprise Programming\\Enterpise_Programming\\test\\myTest\\Program.cs",
+              "RelativeDocumentMoniker": "myTest\\Program.cs",
+              "ToolTip": "G:\\Enterprise Programming\\Enterpise_Programming\\test\\myTest\\Program.cs",
+              "RelativeToolTip": "myTest\\Program.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAABsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-19T15:19:22.742Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "launchSettings.json",
+              "DocumentMoniker": "G:\\Enterprise Programming\\Enterpise_Programming\\test\\myTest\\Properties\\launchSettings.json",
+              "RelativeDocumentMoniker": "myTest\\Properties\\launchSettings.json",
+              "ToolTip": "G:\\Enterprise Programming\\Enterpise_Programming\\test\\myTest\\Properties\\launchSettings.json",
+              "RelativeToolTip": "myTest\\Properties\\launchSettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-02-19T15:09:34.446Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "G:\\Enterprise Programming\\Enterpise_Programming\\test\\myTest\\appsettings.json",
+              "RelativeDocumentMoniker": "myTest\\appsettings.json",
+              "ToolTip": "G:\\Enterprise Programming\\Enterpise_Programming\\test\\myTest\\appsettings.json",
+              "RelativeToolTip": "myTest\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-02-19T15:09:20.496Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

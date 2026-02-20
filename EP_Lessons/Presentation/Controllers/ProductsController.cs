@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Diagnostics;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Presentation.Models;
+using Common.Interfaces;
 
 
 namespace Presentation.Controllers
@@ -12,11 +13,14 @@ namespace Presentation.Controllers
     {
 
         private CategoriesRepository myCategoriesRepository;
-        private ProductsRepository myProductsRepository;
-        public ProductsController(CategoriesRepository efficientCategoriesRepository, ProductsRepository productsRepository) //requesting an instance of Categories Repository via constructor injection
+        private IProductsRepository myProductsRepository;
+        private OrdersRepository myOrdersRepository;
+
+        public ProductsController(CategoriesRepository efficientCategoriesRepository, IProductsRepository productsRepository,  OrdersRepository ordersRepository) //requesting an instance of Categories Repository via constructor injection
         {
             myCategoriesRepository = efficientCategoriesRepository;
             myProductsRepository = productsRepository;
+            myOrdersRepository = ordersRepository;
         }
 
         public IActionResult Index(int page = 1, int pageSize = 9)
@@ -297,6 +301,59 @@ namespace Presentation.Controllers
 
         }
 
+
+
+        public IActionResult Checkout(List<OrderItem> productsToBuy, string buttonChoice)
+        {
+            string username = "anonymous";
+
+            if (buttonChoice.ToLower() == "delete")
+            {
+                foreach (var oi in productsToBuy)
+                {
+                    if (oi.ProductFK != 0)
+                    {
+                        myProductsRepository.Delete(oi.ProductFK);
+                    }
+                }
+                TempData["success"] = "Product(s) deleted successfully";
+
+            }
+            else
+            {
+                try
+                {
+                    List<OrderItem> productsConfirmed = new List<OrderItem>();
+                    foreach (var oi in productsToBuy)
+                    {
+                        if (oi.ProductFK != 0 && oi.Quantity > 0)
+                        {
+                            productsConfirmed.Add(oi);
+                        }
+                    }
+
+                    myOrdersRepository.Checkout(productsConfirmed, username);
+
+                    TempData["success"] = "Order was placed successfully";
+                }
+                catch (Exception ex)
+                {
+                    if (ex.Message.Contains("Not enough"))
+                    {
+                        TempData["error"] = ex.Message;
+                    }
+                    else
+                        TempData["error"] = "Order was not placed. Try again later";
+                }
+            }
+            return RedirectToAction("Index");
+
         }
+
+
+
+
+
+    }
 
 }
