@@ -1,5 +1,7 @@
+using Common.Interfaces;
 using Common.Models;
 using DataAccess.Context;
+using DataAccess.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Presentation;
@@ -17,6 +19,22 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<CatalogueDbContext>();
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddMemoryCache();
+
+
+builder.Services.AddScoped<ItemsMemoryRepository>();
+builder.Services.AddScoped<ItemsDbRepository>();
+
+builder.Services.AddKeyedScoped<IItemsRepository, ItemsDbRepository>("db");
+builder.Services.AddKeyedScoped<IItemsRepository, ItemsMemoryRepository>("cache");
+
+
+
+
+//builder.Services.AddScoped<ItemsMemoryRepository>();
+
+//builder.Services.AddScoped<ItemsDbRepository>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -32,11 +50,11 @@ else
 }
 
 
-using (var scope = app.Services.CreateScope())
+/*using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<CatalogueDbContext>();
     DbSeeder.Seed(context);
-}
+}*/
 
 
 

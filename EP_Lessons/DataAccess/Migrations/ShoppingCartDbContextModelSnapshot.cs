@@ -18,6 +18,9 @@ namespace DataAccess.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "8.0.22")
+                .HasAnnotation("Proxies:ChangeTracking", false)
+                .HasAnnotation("Proxies:CheckEquality", false)
+                .HasAnnotation("Proxies:LazyLoading", true)
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -106,6 +109,9 @@ namespace DataAccess.Migrations
                     b.Property<string>("Description")
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
+
+                    b.Property<bool>("Discount")
+                        .HasColumnType("bit");
 
                     b.Property<string>("ImagePath")
                         .HasColumnType("nvarchar(max)");
@@ -352,7 +358,7 @@ namespace DataAccess.Migrations
             modelBuilder.Entity("Common.Models.Product", b =>
                 {
                     b.HasOne("Common.Models.Category", "Category")
-                        .WithMany("Products")
+                        .WithMany()
                         .HasForeignKey("CategoryFK")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -409,11 +415,6 @@ namespace DataAccess.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Common.Models.Category", b =>
-                {
-                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("Common.Models.Order", b =>

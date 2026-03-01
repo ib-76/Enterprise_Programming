@@ -1,5 +1,5 @@
-﻿using Common.Models;
-using Common.Interfaces;
+﻿using Common.Interfaces;
+using Common.Models;
 using DataAccess.Context;
 using System;
 using System.Collections.Generic;
@@ -9,11 +9,10 @@ using System.Threading.Tasks;
 
 namespace DataAccess.Repositories
 {
-    public class OrdersRepository
+    public class OrdersRepository : IOrdersRepository
     {
         private ShoppingCartDbContext _shoppingCartDbContext;
         private IProductsRepository _productsRepository;
-        //private ProductsRepository _productsRepository;
         public OrdersRepository(ShoppingCartDbContext context, IProductsRepository pr)
         {
 
@@ -43,9 +42,10 @@ namespace DataAccess.Repositories
 
             Order myOrder = new Order();
             myOrder.Username = username;
-            myOrder.DatePlaced = DateTime.Now;
+            //myOrder.DataPlaced = DateTime.Now;
             myOrder.FinalPrice = 0;
             myOrder.Id = Guid.NewGuid();
+            AddOrder(myOrder);
 
             foreach (OrderItem oi in orderItems)
             {
@@ -58,16 +58,22 @@ namespace DataAccess.Repositories
                 {
                     evaluatedProduct.Stock -= oi.Quantity;
                 }
-                myOrder.FinalPrice += (evaluatedProduct.Price * oi.Quantity);
-                oi.OrderFK = myOrder.Id;
-                AddOrderItem(oi);
-            }
+                myOrder.FinalPrice += (oi.Price);
 
-            AddOrder(myOrder);
+
+                oi.OrderFK = myOrder.Id;
+                AddOrderItem(new OrderItem()
+                {
+                    OrderFK = myOrder.Id,
+                    Price = oi.Price,
+                    ProductFK = oi.ProductFK,
+                    Quantity = oi.Quantity
+
+                });
+            }
 
             _shoppingCartDbContext.SaveChanges();
         }
 
     }
 }
-

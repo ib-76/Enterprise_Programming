@@ -1,6 +1,5 @@
 ﻿using Common.Models;
 using DataAccess.Context;
-using Common.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +14,9 @@ namespace Presentation
             if (context.Restaurants.Any())
                 return;
 
-            // Restaurants (based on JSON)
+            // -------------------------------
+            // Create Restaurants
+            // -------------------------------
             var sushiWave = new Restaurant
             {
                 Name = "Sushi Wave",
@@ -24,6 +25,7 @@ namespace Presentation
                 Address = "45 Marina Street, Sliema",
                 Phone = "+356 9876 5432",
                 BistrobaseId = "R-001",
+                Status = null // Pending
             };
 
             var marioBistro = new Restaurant
@@ -34,6 +36,7 @@ namespace Presentation
                 Address = "123 Main Street, Valletta",
                 Phone = "+356 1234 5678",
                 BistrobaseId = "R-002",
+                Status = null
             };
 
             var oceanGrill = new Restaurant
@@ -44,90 +47,98 @@ namespace Presentation
                 Address = "456 Beach Road, St Julian's",
                 Phone = "+356 8765 4321",
                 BistrobaseId = "R-003",
-
+                Status = null
             };
 
-            // MenuItems using navigation property
-
-            sushiWave.MenuItems = new List<MenuItem>
+            // -------------------------------
+            // Create MenuItems and assign RestaurantId
+            // -------------------------------
+            var menuItems = new List<MenuItem>
             {
+                // Sushi Wave (Id will be assigned later)
                 new MenuItem
                 {
                     Id = Guid.NewGuid(),
+                    BistrobaseId = "M-001",
                     Title = "Salmon Nigiri",
                     Price = 6.50,
                     Currency = "EUR",
-                    BistrobaseId = "M-001",
-                   
-
+                    Status = null,
+                    Restaurant = sushiWave
                 },
                 new MenuItem
                 {
                     Id = Guid.NewGuid(),
+                    BistrobaseId = "M-002",
                     Title = "Dragon Roll",
                     Price = 12.00,
                     Currency = "EUR",
-                    BistrobaseId = "M-002",
-                     
-                }
-            };
+                    Status = null,
+                    Restaurant = sushiWave
+                },
 
-            marioBistro.MenuItems = new List<MenuItem>
-            {
+                // Mario's Bistro
                 new MenuItem
                 {
                     Id = Guid.NewGuid(),
+                    BistrobaseId = "M-003",
                     Title = "Tagliatelle al Ragù",
                     Price = 11.50,
                     Currency = "EUR",
-                    BistrobaseId = "M-003",
-                     
+                    Status = null,
+                    Restaurant = marioBistro
                 },
                 new MenuItem
                 {
                     Id = Guid.NewGuid(),
+                    BistrobaseId = "M-004",
                     Title = "Margherita Pizza",
                     Price = 9.90,
                     Currency = "EUR",
-                    BistrobaseId = "M-004",
+                    Status = null,
+                    Restaurant = marioBistro
                 },
                 new MenuItem
                 {
                     Id = Guid.NewGuid(),
+                    BistrobaseId = "M-005",
                     Title = "Pepperoni Pizza",
                     Price = 12.00,
                     Currency = "EUR",
-                    BistrobaseId = "M-005",
+                    Status = null,
+                    Restaurant = marioBistro
+                },
 
-                }
-            };
-
-            oceanGrill.MenuItems = new List<MenuItem>
-            {
+                // Ocean Grill
                 new MenuItem
                 {
                     Id = Guid.NewGuid(),
+                    BistrobaseId = "M-006",
                     Title = "Grilled Salmon",
                     Price = 18.90,
                     Currency = "EUR",
-                    BistrobaseId = "M-006",
-
+                    Status = null,
+                    Restaurant = oceanGrill
                 },
                 new MenuItem
                 {
                     Id = Guid.NewGuid(),
+                    BistrobaseId = "M-007",
                     Title = "Fish and Chips",
                     Price = 15.50,
                     Currency = "EUR",
-                    BistrobaseId = "M-007",
-
+                    Status = null,
+                    Restaurant = oceanGrill
                 }
             };
 
-            // Add everything
+            // -------------------------------
+            // Add Restaurants and MenuItems
+            // -------------------------------
             context.Restaurants.AddRange(sushiWave, marioBistro, oceanGrill);
+            context.MenuItems.AddRange(menuItems);
 
-            // Save
+            // Save changes
             context.SaveChanges();
         }
     }

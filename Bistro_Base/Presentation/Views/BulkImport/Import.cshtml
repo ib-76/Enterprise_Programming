@@ -1,0 +1,134 @@
+﻿@using Common.Interfaces
+@using Common.Models
+@using DataAccess.Repositories
+@inject ItemsMemoryRepository MemoryRepo
+
+@{
+    ViewData["Title"] = "Import Data";
+    var items = MemoryRepo.Get();
+    var restaurants = items.OfType<Restaurant>().ToList();
+    var menuItems = items.OfType<MenuItem>().ToList();
+}
+
+<div class="container my-4">
+    <h2 class="fw-bold mb-4">Data Import</h2>
+
+    <form asp-controller="BulkImport" asp-action="Import" method="post" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label class="form-label">
+                Kindly select a JSON file that complies with the specified structure and formatting requirements.
+            </label>
+            <input type="file" name="file" class="form-control" accept=".json" required />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Upload</button>
+    </form>
+
+    <hr class="my-4" />
+
+    @* Restaurants Table *@
+    @if (restaurants.Any())
+    {
+        <h3 class="fw-bold fs-4 mb-3">Restaurants</h3>
+        <table class="table table-striped table-bordered table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Bistrobase ID</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Owner Email</th>
+                    <th>Address</th>
+                    <th>Phone</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var r in restaurants)
+                {
+                    <tr>
+                        <td>@r.BistrobaseId</td>
+                        <td>@r.Name</td>
+                        <td>@r.Description</td>
+                        <td>@r.OwnerEmailAddress</td>
+                        <td>@r.Address</td>
+                        <td>@r.Phone</td>
+                        <td>@(r.Status == null ? "Pending" : r.Status == true ? "Approved" : "Rejected")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+    @* Menu Items Table with Restaurant Name *@
+    @if (menuItems.Any())
+    {
+        <h3 class="fw-bold fs-4 mt-5 mb-3">Menu Items</h3>
+        <table class="table table-striped table-bordered table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Bistrobase ID</th>
+                    <th>Title</th>
+                    <th>Price</th>
+                    <th>Currency</th>
+                    <th>Restaurant</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var m in menuItems)
+                {
+                    var restaurantName = m.Restaurant?.Name ?? "N/A";
+
+                    <tr>
+                        <td>@m.BistrobaseId</td>
+                        <td>@m.Title</td>
+                        <td>@m.Price</td>
+                        <td>@m.Currency</td>
+                        <td>@restaurantName</td>
+                        <td>@(m.Status == null ? "Pending" : m.Status == true ? "Approved" : "Rejected")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+    @if (!items.Any())
+    {
+        <p>No items uploaded yet.</p>
+    }
+</div>
+@if (items.Any())
+{
+    <hr class="my-4" />
+
+    <h4 class="fw-bold mb-3">Download Default Images ZIP</h4>
+
+    <form asp-controller="BulkImport" asp-action="DownloadZip" method="post" class="d-flex gap-2">
+        <input type="text" name="zipName" class="form-control" placeholder="Zip name (optional)" />
+
+        <button type="submit" class="btn btn-success">
+            Download ZIP
+        </button>
+    </form>
+
+    <hr class="my-4" />
+
+    <h4 class="fw-bold mb-3">Upload Edited Images ZIP</h4>
+
+    <form asp-controller="BulkImport" asp-action="UploadZip" method="post" enctype="multipart/form-data" class="d-flex gap-2">
+
+        <input type="file" name="zipFile" class="form-control" accept=".zip" required />
+
+        <button type="submit" class="btn btn-primary">
+            Upload ZIP
+        </button>
+
+    </form>
+
+
+
+
+
+
+
+}

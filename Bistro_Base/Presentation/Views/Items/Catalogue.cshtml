@@ -1,0 +1,98 @@
+﻿@using Common.Enums
+@using Common.Models
+@model IEnumerable<Common.Interfaces.IitemValidating>
+
+@{
+    // Change this manually for simulation: owner1 / owner2 / admin
+    var currentSimulateUser = "owner2";
+}
+
+<!-- Pending Items Button -->
+<form method="get" asp-action="Pending" class="mb-3">
+    <input type="hidden" name="simulateUser" value="@currentSimulateUser" />
+    <button type="submit" class="btn btn-dark btn-lg">Pending Items</button>
+</form>
+
+@if (Model != null && Model.Any())
+{
+    <form asp-action="UpdateStatusBulk" method="post">
+
+        <!-- Keep simulated user after POST -->
+        <input type="hidden" name="simulateUser" value="@currentSimulateUser" />
+
+        <div class="catalog d-flex flex-wrap">
+            @foreach (var item in Model)
+            {
+                if (item.GetCardPartial() == ItemType.Restaurant)
+                {
+                    var r = item as Restaurant;
+
+                    <div class="card m-2 shadow" style="width: 22rem;">
+                        <div class="card-body">
+
+                            <div class="form-check mb-2"><input type="checkbox"name="selectedIds" value="@r.Id" class="form-check-input bg-dark border-dark" /></div>
+
+                            <h5 class="card-title">@r.Name</h5>
+                            <p class="card-text">@r.Description</p>
+
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item"><b>Owner Email:</b> @r.OwnerEmailAddress</li>
+                                <li class="list-group-item"><b>Address:</b> @r.Address</li>
+                                <li class="list-group-item"><b>Phone:</b> @r.Phone</li>
+                                <li class="list-group-item">
+                                    <b>Status:</b>
+                                    @(r.Status == true ? "Accepted" : r.Status == false ? "Rejected" : "Pending")
+                                </li>
+                            </ul>
+
+                            <img src="~/@r.ImagePath.Replace("wwwroot/", "")"
+                                 class="card-img-bottom mt-2"
+                                 alt="@r.Name"
+                                 style="height:180px; object-fit:cover;" />
+                        </div>
+                    </div>
+                }
+
+                if (item.GetCardPartial() == ItemType.MenuItem)
+                {
+                    var m = item as MenuItem;
+
+                    <div class="card m-2 shadow" style="width: 22rem;">
+                        <div class="card-body">
+
+                            <div class="form-check mb-2"><input type="checkbox" name="selectedIds" value="@m.Id" class="form-check-input bg-dark border-dark" /></div>
+
+                            <h5 class="card-title">@m.Title</h5>
+
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item"><b>Price:</b> @m.Price @m.Currency</li>
+                                <li class="list-group-item"><b>Restaurant:</b> @m.Restaurant.Name</li>
+                                <li class="list-group-item">
+                                    <b>Status:</b>
+                                    @(m.Status == true ? "Accepted" : m.Status == false ? "Rejected" : "Pending")
+                                </li>
+                            </ul>
+
+                            <img src="~/@m.ImagePath.Replace("wwwroot/", "")"
+                                 class="card-img-bottom mt-2"
+                                 alt="@m.Title"
+                                 style="height:180px; object-fit:cover;" />
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+
+        <!-- Accept / Reject Buttons -->
+        <div class="mt-3">
+            <button type="submit" name="action" value="accept" class="btn btn-success btn-lg me-2">
+                Accept Selected
+            </button>
+
+            <button type="submit" name="action" value="reject" class="btn btn-danger btn-lg">
+                Reject Selected
+            </button>
+        </div>
+
+    </form>
+}

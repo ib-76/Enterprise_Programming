@@ -39,11 +39,15 @@ namespace DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ImagePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<double>("Price")
                         .HasColumnType("float");
 
-                    b.Property<int>("RestaurantId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("RestaurantId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool?>("Status")
                         .HasColumnType("bit");
@@ -61,11 +65,9 @@ namespace DataAccess.Migrations
 
             modelBuilder.Entity("Common.Models.Restaurant", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Address")
                         .IsRequired()
@@ -78,6 +80,10 @@ namespace DataAccess.Migrations
                     b.Property<string>("Description")
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("ImagePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()

@@ -1,4 +1,5 @@
-﻿using Common.Interfaces;
+﻿using Common.Enums;
+using Common.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -9,11 +10,10 @@ using System.Threading.Tasks;
 
 namespace Common.Models
 {
-    public class Restaurant : ItemValidating
+    public class Restaurant : IitemValidating
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         public string BistrobaseId { get; set; }
 
@@ -25,20 +25,20 @@ namespace Common.Models
         public string Address { get; set; }
         public string Phone { get; set; }
         public bool? Status { get; set; }
+        public string ImagePath { get; set; }
 
         // Navigation property
         public virtual ICollection<MenuItem> MenuItems { get; set; }
 
 
-        public List<string> GetValidators()
+        public ItemType GetCardPartial()
         {
-            // hardcoded admin email for now
-            return new List<string> { "admin@restautants.com" };
+            return ItemType.Restaurant;
         }
 
-        public string GetCardPartial()
+        public List<string> GetValidators()
         {
-            return "_RestaurantCard.cshtml";
+             return new List<string> {  "luca.owner@example.com", "hana.owner@example.com" };
         }
     }
 }
