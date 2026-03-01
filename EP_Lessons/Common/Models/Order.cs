@@ -10,6 +10,8 @@ namespace Common.Models
 {
     public class Order
     {
+        public DateTime DataPlaced;
+
         //8CGUJKIOJF-7YY9-H4X2-A5D6-3K5G7H8I9J0L guid property
 
         [Key]

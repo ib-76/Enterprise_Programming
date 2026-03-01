@@ -1,5 +1,7 @@
 ﻿using Common.Interfaces;
 using Common.Models;
+using DataAccess.Factory;
+
 //using DataAccess.Factory;
 using DataAccess.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -57,7 +59,9 @@ namespace Presentation.Controllers
             return View(myModel);
         }
 
-        public IActionResult Commit( [FromServices] IProductsRepository productsRepository)
+        public IActionResult Commit(
+            [FromServices] NotificationFactory factory, 
+            [FromServices] IProductsRepository productsRepository)
         {
             //read from cache
             //save in db
@@ -80,9 +84,9 @@ namespace Presentation.Controllers
 
             foreach (var oi in list)
             {
-               // var product = productsRepository.Get(oi.ProductFK);
-               // INotification notification = factory.Create(product.CategoryFK);
-               // notification.Notify($"Product {product.Name} has been bought");
+                var product = productsRepository.Get(oi.ProductFK);
+                INotification notification = factory.Create(product.CategoryFK);
+                notification.Notify($"Product {product.Name} has been bought");
             }
 
             _ordersCacheRepository.ClearCache(username);

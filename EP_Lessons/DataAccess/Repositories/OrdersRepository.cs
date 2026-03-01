@@ -42,7 +42,7 @@ namespace DataAccess.Repositories
 
             Order myOrder = new Order();
             myOrder.Username = username;
-            //myOrder.DataPlaced = DateTime.Now;
+            myOrder.DatePlaced = DateTime.Now;
             myOrder.FinalPrice = 0;
             myOrder.Id = Guid.NewGuid();
             AddOrder(myOrder);

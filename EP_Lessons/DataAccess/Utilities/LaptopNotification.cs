@@ -11,7 +11,7 @@ namespace DataAccess.Utilities
     {
         public void Notify(string message)
         {
-            using (var sw = System.IO.File.AppendText(@"C:\Users\Ryan\source\repos\EP_PT_2026\EP_PT_Jan2026\Presentation\laptops.log"))
+            using (var sw = System.IO.File.AppendText(@"G:\Enterprise Programming\Enterpise_Programming\EP_Lessons\Presentation\laptops.log"))
             {
                 sw.WriteLine(message);
             }
