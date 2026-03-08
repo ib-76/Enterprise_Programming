@@ -1,11 +1,13 @@
-﻿@using Common.Interfaces
+﻿@model List<Common.Interfaces.IitemValidating>
+@using Common.Interfaces
 @using Common.Models
 @using DataAccess.Repositories
-@inject ItemsMemoryRepository MemoryRepo
+
+
 
 @{
     ViewData["Title"] = "Import Data";
-    var items = MemoryRepo.Get();
+    var items = Model ?? new List<IitemValidating>();
     var restaurants = items.OfType<Restaurant>().ToList();
     var menuItems = items.OfType<MenuItem>().ToList();
 }

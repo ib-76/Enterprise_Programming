@@ -10,77 +10,87 @@ namespace Presentation.Controllers
 {
     public class BulkImportController : Controller
     {
-        private readonly ItemsMemoryRepository _memoryRepo;
-        private readonly ItemsDbRepository _dbRepo;
+        private ItemsMemoryRepository _memoryRepo;
+        private ItemsDbRepository _dbRepo;
 
-        // Constructor injects concrete repositories
-       public BulkImportController( ItemsMemoryRepository memoryRepo, ItemsDbRepository dbRepo)
-      {
-          _memoryRepo = memoryRepo;
-           _dbRepo = dbRepo;
-       }
+        // 
+        public BulkImportController(
+        [FromKeyedServices("db")] IItemsRepository ordersDbRepository,
+        [FromKeyedServices("cache")] IItemsRepository ordersCacheRepository)
+        {
+            _memoryRepo = (ItemsMemoryRepository)ordersCacheRepository;
+            _dbRepo = (ItemsDbRepository)ordersDbRepository;
+        }
+
 
         [HttpGet]
-        public IActionResult Import() => View();
+        public IActionResult Import()
+        {
+            var items = _memoryRepo.Get();
+            return View(items);
+        }
 
         public IActionResult Index() => View();
 
-        // Method-level injection of keyed service
+        
         [HttpPost]
-        public IActionResult Import(
-            IFormFile file,
-            [FromKeyedServices("cache")] IItemsRepository memoryRepo)
+        public IActionResult Import(IFormFile file)
         {
-            if (file == null || file.Length == 0) return BadRequest("No file uploaded");
+            if (file == null || file.Length == 0)
+                return BadRequest("No file uploaded");
 
             string json;
             using (var reader = new StreamReader(file.OpenReadStream()))
                 json = reader.ReadToEnd();
 
             var items = ImportItemFactory.Create(json);
-            memoryRepo.Save(items); // use the keyed repository here
+            _memoryRepo.Save(items);
 
-            return View();
+            return View(items); // return model
         }
+
+
 
         [HttpPost]
-        public IActionResult DownloadZip(
-            string zipName,
-            [FromKeyedServices("cache")] IItemsRepository memoryRepo)
+        public IActionResult DownloadZip(string zipName, [FromServices] IWebHostEnvironment env)
         {
-            var items = memoryRepo.Get();
-            if (!items.Any()) return BadRequest("No items available");
+            var items = _memoryRepo.Get();
+            if (items == null || !items.Any())
+                return BadRequest("No items available");
 
-            if (string.IsNullOrWhiteSpace(zipName)) zipName = "images";
+            if (string.IsNullOrWhiteSpace(zipName))
+                zipName = "images";
 
-            var tempPath = Path.Combine(Path.GetTempPath(), "itemsZip");
-            if (Directory.Exists(tempPath)) Directory.Delete(tempPath, true);
-            Directory.CreateDirectory(tempPath);
+            var defaultImagePath = Path.Combine(env.WebRootPath, "Images", "default.jpg");
+            if (!System.IO.File.Exists(defaultImagePath))
+                return BadRequest("Default image not found.");
 
-            var defaultImage = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Images", "default.jpg");
+            using var memoryStream = new MemoryStream();
 
-            foreach (var item in items)
+            using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
             {
-                var folder = Path.Combine(tempPath, $"item-{item.BistrobaseId}");
-                Directory.CreateDirectory(folder);
-                System.IO.File.Copy(defaultImage, Path.Combine(folder, "default.jpg"), true);
+                foreach (var item in items)
+                {
+                    var entryPath = $"item-{item.BistrobaseId}/default.jpg";
+                    var entry = archive.CreateEntry(entryPath);
+
+                    using var entryStream = entry.Open();
+                    using var fileStream = new FileStream(defaultImagePath, FileMode.Open, FileAccess.Read);
+
+                    fileStream.CopyTo(entryStream);
+                }
             }
 
-            var zipPath = Path.Combine(Path.GetTempPath(), $"{zipName}.zip");
-            if (System.IO.File.Exists(zipPath)) System.IO.File.Delete(zipPath);
+            memoryStream.Position = 0;
 
-            ZipFile.CreateFromDirectory(tempPath, zipPath);
-            var bytes = System.IO.File.ReadAllBytes(zipPath);
-
-            return File(bytes, "application/zip", $"{zipName}.zip");
+            return File(memoryStream.ToArray(), "application/zip", $"{zipName}.zip");
         }
+
+
 
         [HttpPost]
         public IActionResult UploadZip(
-            IFormFile zipfile,
-            [FromKeyedServices("cache")] IItemsRepository memoryRepo,
-            [FromKeyedServices("db")] IItemsRepository dbRepo,
-            [FromServices] IWebHostEnvironment host)
+            IFormFile zipfile,[FromServices] IWebHostEnvironment host)
         {
             if (zipfile == null || zipfile.Length == 0) return BadRequest("No file uploaded");
 
@@ -108,18 +118,19 @@ namespace Presentation.Controllers
                     using var fileStream = new FileStream(destPath, FileMode.Create);
                     entry.Open().CopyTo(fileStream);
 
-                    SetImagePath(bistroId, fileName, memoryRepo);
+                    SetImagePath(bistroId, fileName, _memoryRepo);
                 }
             }
 
-            dbRepo.Save(memoryRepo.Get());
+           _dbRepo.Save(_memoryRepo.Get());
             return RedirectToAction("Import");
         }
 
         private void SetImagePath(string bistroId, string fileName,
-            [FromKeyedServices("cache")] IItemsRepository memoryRepo)
+            [FromKeyedServices("cache")] IItemsRepository memoryRepo // method injection
+            )
         {
-            var items = memoryRepo.Get();
+            var items = _memoryRepo.Get();
 
             if (bistroId.StartsWith("M"))
             {

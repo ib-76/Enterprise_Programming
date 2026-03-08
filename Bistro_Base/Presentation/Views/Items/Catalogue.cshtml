@@ -3,34 +3,37 @@
 @model IEnumerable<Common.Interfaces.IitemValidating>
 
 @{
-    // Change this manually for simulation: owner1 / owner2 / admin
-    var currentSimulateUser = "owner2";
+    // Hardcoded simulation (matches controller)
+    var currentSimulateUser = ViewData["simulateUser"]?.ToString() ?? "admin";
 }
 
 <!-- Pending Items Button -->
-<form method="get" asp-action="Pending" class="mb-3">
-    <input type="hidden" name="simulateUser" value="@currentSimulateUser" />
-    <button type="submit" class="btn btn-dark btn-lg">Pending Items</button>
-</form>
-
-@if (Model != null && Model.Any())
+@if (Model == null || !Model.Any())
+{
+    <form method="get" asp-action="Pending" class="mb-3">
+        <input type="hidden" name="simulateUser" value="@currentSimulateUser" />
+        <button type="submit" class="btn btn-dark btn-lg">Pending Items</button>
+    </form>
+}
+else
 {
     <form asp-action="UpdateStatusBulk" method="post">
-
         <!-- Keep simulated user after POST -->
         <input type="hidden" name="simulateUser" value="@currentSimulateUser" />
 
         <div class="catalog d-flex flex-wrap">
             @foreach (var item in Model)
             {
+                @* Render Restaurant cards *@
                 if (item.GetCardPartial() == ItemType.Restaurant)
                 {
                     var r = item as Restaurant;
-
                     <div class="card m-2 shadow" style="width: 22rem;">
                         <div class="card-body">
 
-                            <div class="form-check mb-2"><input type="checkbox"name="selectedIds" value="@r.Id" class="form-check-input bg-dark border-dark" /></div>
+                            <div class="form-check mb-2">
+                                <input type="checkbox" name="selectedIds" value="@r.Id" class="form-check-input bg-dark border-dark" />
+                            </div>
 
                             <h5 class="card-title">@r.Name</h5>
                             <p class="card-text">@r.Description</p>
@@ -53,14 +56,16 @@
                     </div>
                 }
 
+                @* Render MenuItem cards *@
                 if (item.GetCardPartial() == ItemType.MenuItem)
                 {
                     var m = item as MenuItem;
-
                     <div class="card m-2 shadow" style="width: 22rem;">
                         <div class="card-body">
 
-                            <div class="form-check mb-2"><input type="checkbox" name="selectedIds" value="@m.Id" class="form-check-input bg-dark border-dark" /></div>
+                            <div class="form-check mb-2">
+                                <input type="checkbox" name="selectedIds" value="@m.Id" class="form-check-input bg-dark border-dark" />
+                            </div>
 
                             <h5 class="card-title">@m.Title</h5>
 
@@ -93,6 +98,5 @@
                 Reject Selected
             </button>
         </div>
-
     </form>
 }

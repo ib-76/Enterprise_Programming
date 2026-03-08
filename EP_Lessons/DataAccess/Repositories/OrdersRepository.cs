@@ -46,30 +46,32 @@ namespace DataAccess.Repositories
             myOrder.FinalPrice = 0;
             myOrder.Id = Guid.NewGuid();
             AddOrder(myOrder);
-
-            foreach (OrderItem oi in orderItems)
+            if (orderItems != null)
             {
-                var evaluatedProduct = _productsRepository.Get(oi.ProductFK);
-                if (oi.Quantity > evaluatedProduct.Stock)
+                foreach (OrderItem oi in orderItems)
                 {
-                    throw new Exception("Not enough stock for product " + oi.ProductFK);
+                    var evaluatedProduct = _productsRepository.Get(oi.ProductFK);
+                    if (oi.Quantity > evaluatedProduct.Stock)
+                    {
+                        throw new Exception("Not enough stock for product " + oi.ProductFK);
+                    }
+                    else
+                    {
+                        evaluatedProduct.Stock -= oi.Quantity;
+                    }
+                    myOrder.FinalPrice += (oi.Price);
+
+
+                    oi.OrderFK = myOrder.Id;
+                    AddOrderItem(new OrderItem()
+                    {
+                        OrderFK = myOrder.Id,
+                        Price = oi.Price,
+                        ProductFK = oi.ProductFK,
+                        Quantity = oi.Quantity
+
+                    });
                 }
-                else
-                {
-                    evaluatedProduct.Stock -= oi.Quantity;
-                }
-                myOrder.FinalPrice += (oi.Price);
-
-
-                oi.OrderFK = myOrder.Id;
-                AddOrderItem(new OrderItem()
-                {
-                    OrderFK = myOrder.Id,
-                    Price = oi.Price,
-                    ProductFK = oi.ProductFK,
-                    Quantity = oi.Quantity
-
-                });
             }
 
             _shoppingCartDbContext.SaveChanges();

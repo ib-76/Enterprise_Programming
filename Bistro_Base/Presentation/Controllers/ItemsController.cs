@@ -1,24 +1,19 @@
 ﻿using Common.Interfaces;
 using Common.Models;
-using DataAccess.Context;
-using DataAccess.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 public class ItemsController : Controller
 {
-    private readonly ItemsDbRepository _repository;
-   
+    private readonly IItemsRepository _dbRepo;
 
-    public ItemsController(ItemsDbRepository repository)
+    public ItemsController([FromKeyedServices("db")] IItemsRepository dbRepository)
     {
-        _repository = repository;
-      
+        _dbRepo = dbRepository;
     }
 
     public IActionResult Pending(string simulateUser)
     {
-        ViewData["SimulateUser"] = simulateUser;
+        var allItems = _dbRepo.Get();
 
         string currentUserEmail = simulateUser switch
         {
@@ -28,22 +23,46 @@ public class ItemsController : Controller
             _ => "guest@site.com"
         };
 
-        var pendingItems = _repository.GetPending(simulateUser, currentUserEmail);
+        List<IitemValidating> pending = simulateUser switch
+        {
+            "admin" => allItems.OfType<Restaurant>()
+                               .Where(r => r.Status == null)
+                               .Cast<IitemValidating>()
+                               .ToList(),
 
-        return View("Catalogue", pendingItems);
+            "owner1" or "owner2" => allItems.OfType<MenuItem>()
+                                           .Where(m => m.Status == null &&
+                                                       m.Restaurant.OwnerEmailAddress == currentUserEmail)
+                                           .Cast<IitemValidating>()
+                                           .ToList(),
+
+            _ => new List<IitemValidating>()
+        };
+
+        return View("catalogue", pending);
     }
 
     [HttpPost]
     public IActionResult UpdateStatusBulk(Guid[] selectedIds, string action, string simulateUser)
     {
         bool status = action == "accept";
+        var items = _dbRepo.Get();
 
-        _repository.UpdateStatusBulk(selectedIds, status);
+        foreach (var item in items)
+        {
+            switch (item)
+            {
+                case Restaurant r when selectedIds.Contains(r.Id):
+                    r.Status = status;
+                    break;
 
-        TempData["success"] = $"Updated {selectedIds.Length} item(s) successfully!";
+                case MenuItem m when selectedIds.Contains(m.Id):
+                    m.Status = status;
+                    break;
+            }
+        }
+
+        _dbRepo.Save(items);
         return RedirectToAction("Pending", new { simulateUser });
     }
-
-
-
 }

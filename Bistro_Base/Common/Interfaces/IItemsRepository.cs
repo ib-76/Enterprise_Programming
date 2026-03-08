@@ -11,7 +11,7 @@ namespace Common.Interfaces
     {
         List<IitemValidating> Get();
         void Save(List<IitemValidating> items);
-
+    
 
     }
 }

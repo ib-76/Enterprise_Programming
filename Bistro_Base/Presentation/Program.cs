@@ -22,18 +22,12 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddMemoryCache();
 
 
-builder.Services.AddScoped<ItemsMemoryRepository>();
-builder.Services.AddScoped<ItemsDbRepository>();
-
 builder.Services.AddKeyedScoped<IItemsRepository, ItemsDbRepository>("db");
 builder.Services.AddKeyedScoped<IItemsRepository, ItemsMemoryRepository>("cache");
 
 
 
 
-//builder.Services.AddScoped<ItemsMemoryRepository>();
-
-//builder.Services.AddScoped<ItemsDbRepository>();
 
 var app = builder.Build();
 

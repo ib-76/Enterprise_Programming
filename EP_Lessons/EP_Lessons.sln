@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccess", "DataAccess\DataAccess.csproj", "{FB749359-B12B-47B8-B0F9-562E06F60DD2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplication1", "C:\Users\iborg\Downloads\EP_PT_2026-main\EP_PT_2026-main\EP_PT_Jan2026\WebApplication1\WebApplication1.csproj", "{108E4A92-2119-84B3-CF09-00E1CAF11BFD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{FB749359-B12B-47B8-B0F9-562E06F60DD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FB749359-B12B-47B8-B0F9-562E06F60DD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FB749359-B12B-47B8-B0F9-562E06F60DD2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{108E4A92-2119-84B3-CF09-00E1CAF11BFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{108E4A92-2119-84B3-CF09-00E1CAF11BFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{108E4A92-2119-84B3-CF09-00E1CAF11BFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{108E4A92-2119-84B3-CF09-00E1CAF11BFD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

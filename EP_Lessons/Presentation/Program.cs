@@ -1,11 +1,12 @@
+using Common.Interfaces;
 using DataAccess.Context;
+using DataAccess.Factory;
 using DataAccess.Repositories;
+using DataAccess.Utilities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Common.Interfaces;
 using System.Reflection.Metadata.Ecma335;
-using DataAccess.Utilities;
-using DataAccess.Factory;
+using Common.Models;
 //using DataAccess.Factory;
 
 
@@ -18,9 +19,13 @@ builder.Services.AddDbContext<ShoppingCartDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+
+builder.Services
+    .AddDefaultIdentity<CustomUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ShoppingCartDbContext>();
+
 builder.Services.AddControllersWithViews();
+
 
 //scoped services =>  different instance per http request that is most commonly used for db context objects
 //Singleton services => one instnce to be shared by all components that require it

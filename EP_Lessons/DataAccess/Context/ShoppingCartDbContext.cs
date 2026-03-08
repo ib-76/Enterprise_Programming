@@ -1,5 +1,6 @@
 ﻿using Common.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -19,11 +20,10 @@ namespace DataAccess.Context
 
     // identifyDBContext as derived from DbContext : DbContext but you get an  upgrade - it creates the tables that allows us to manage user sessions and identity management
 
-    public class ShoppingCartDbContext : IdentityDbContext
+    public class ShoppingCartDbContext : IdentityDbContext<CustomUser>
     {
         public ShoppingCartDbContext(DbContextOptions<ShoppingCartDbContext> options) : base(options)
-        {
-        }
+        { }
 
         public DbSet<Product> Products { get; set; } // Products is the table name in the database
 

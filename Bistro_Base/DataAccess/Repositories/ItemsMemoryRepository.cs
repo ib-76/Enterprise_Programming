@@ -7,15 +7,36 @@ namespace DataAccess.Repositories
     public class ItemsMemoryRepository : IItemsRepository
     {
         private readonly IMemoryCache _cache;
-        private const string KEY = "importedItems";
+        private const string KEY = "importedItems"; // single key to hold all items
 
-        public ItemsMemoryRepository(IMemoryCache cache) => _cache = cache;
+        // Inject IMemoryCache via DI
+        public ItemsMemoryRepository(IMemoryCache cache)
+        {
+            _cache = cache;
+        }
 
-        public void Save(List<IitemValidating> items) => _cache.Set(KEY, items);
+        // Save list of items to cache
+        public void Save(List<IitemValidating> items)
+        {
+            if (items == null)
+                throw new ArgumentNullException(nameof(items));
 
-        public List<IitemValidating>? Get() =>
-            _cache.TryGetValue(KEY, out List<IitemValidating> items)
-                ? items
-                : new List<IitemValidating>();
+            // You can optionally set cache expiration here
+            _cache.Set(KEY, items);
+        }
+
+
+        // Retrieve list of items from cache
+        public List<IitemValidating> Get()
+        {
+            // Try to get items from the cache
+            if (_cache.TryGetValue(KEY, out List<IitemValidating> items))
+            {
+                return items; // return cached items
+            }
+
+            // Return empty list if nothing is cached
+            return new List<IitemValidating>();
+        }
     }
 }
