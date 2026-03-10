@@ -11,6 +11,46 @@ public class ItemsController : Controller
         _dbRepo = dbRepository;
     }
 
+    // METHOD 1: DEFAULT CATALOGUE
+    public IActionResult Index(string viewType = "approved")
+    {
+        var allItems = _dbRepo.Get();
+
+        // Only restaurants
+        var restaurants = allItems.OfType<Restaurant>().ToList(); // CAST to Restaurant
+
+        // Filter by viewType
+        var restaurantsToShow = viewType switch
+        {
+            "pending" => restaurants.Where(r => r.Status == null).ToList(),
+            _ => restaurants.Where(r => r.Status == true).ToList()
+        };
+
+        ViewData["viewType"] = viewType;
+        ViewData["simulateUser"] = "guest"; // or your simulated user
+
+        return View("catalogue", restaurantsToShow.Cast<IitemValidating>());
+    }
+
+
+    // METHOD 2: DETAILS -> SHOW MENU ITEMS OF RESTAURANT
+    public IActionResult Details(Guid restaurantId, string simulateUser)
+    {
+        var items = _dbRepo.Get();
+
+        var menuItems = items
+            .OfType<MenuItem>()
+            .Where(m => m.Restaurant.Id == restaurantId && m.Status == true)
+            .Cast<IitemValidating>()
+            .ToList();
+
+        ViewData["simulateUser"] = simulateUser;
+
+        return View("catalogue", menuItems);
+    }
+
+
+    // METHOD 3: PENDING (your existing method)
     public IActionResult Pending(string simulateUser)
     {
         var allItems = _dbRepo.Get();
@@ -39,30 +79,35 @@ public class ItemsController : Controller
             _ => new List<IitemValidating>()
         };
 
+        ViewData["simulateUser"] = simulateUser;
+
         return View("catalogue", pending);
     }
 
+
+
     [HttpPost]
-    public IActionResult UpdateStatusBulk(Guid[] selectedIds, string action, string simulateUser)
+    public IActionResult UpdateStatusBulk(Guid[] selectedIds, string simulateUser)
     {
-        bool status = action == "accept";
-        var items = _dbRepo.Get();
+        if (selectedIds == null || selectedIds.Length == 0)
+            return RedirectToAction("Index", new { simulateUser });
 
-        foreach (var item in items)
+        // Get all items from repo
+        var allItems = _dbRepo.Get();
+
+        foreach (var item in allItems)
         {
-            switch (item)
+            if (item is Restaurant r && selectedIds.Contains(r.Id))
             {
-                case Restaurant r when selectedIds.Contains(r.Id):
-                    r.Status = status;
-                    break;
-
-                case MenuItem m when selectedIds.Contains(m.Id):
-                    m.Status = status;
-                    break;
+                r.Status = true; // Approve
             }
         }
 
-        _dbRepo.Save(items);
-        return RedirectToAction("Pending", new { simulateUser });
+        _dbRepo.Save(allItems);
+
+        // Redirect to the same catalogue view
+        return RedirectToAction("Index", new { simulateUser });
     }
+
 }
+

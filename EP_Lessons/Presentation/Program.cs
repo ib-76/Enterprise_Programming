@@ -7,7 +7,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection.Metadata.Ecma335;
 using Common.Models;
-//using DataAccess.Factory;
+using DataAccess.Factory;
+using Presentation.ActionFilters;
 
 
 
@@ -18,6 +19,7 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ShoppingCartDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
 
 
 builder.Services
@@ -76,7 +78,7 @@ builder.Services.AddKeyedScoped<IPriceCalculation, BlackFridayCalculation>("blac
 
 //DI - scoped service
 
-//builder.Services.AddScoped<OrdersRepository>();
+builder.Services.AddScoped<ProductCreateValidationFilter>();
 
 
 

@@ -7,13 +7,12 @@ public class ItemsDbRepository : IItemsRepository
 {
     private readonly CatalogueDbContext _context;
 
-    public ItemsDbRepository(CatalogueDbContext context) => _context = context;
-
-    public List<IitemValidating> Get() 
-    { var restaurants = _context.Restaurants.Include(r => r.MenuItems).Cast<IitemValidating>().ToList();
-        var menuItems = _context.MenuItems.Include(m => m.Restaurant).Cast<IitemValidating>().ToList(); 
-        return restaurants.Concat(menuItems).ToList(); 
+    public ItemsDbRepository(CatalogueDbContext context)
+    {
+        _context = context;
     }
+
+   
 
 
 
@@ -44,5 +43,13 @@ public class ItemsDbRepository : IItemsRepository
         }
 
         _context.SaveChanges();
+    }
+
+
+    public List<IitemValidating> Get()
+    {
+        var restaurants = _context.Restaurants.Include(r => r.MenuItems).Cast<IitemValidating>().ToList();
+        var menuItems = _context.MenuItems.Include(m => m.Restaurant).Cast<IitemValidating>().ToList();
+        return restaurants.Concat(menuItems).ToList();
     }
 }

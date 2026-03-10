@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System;
+using System.ComponentModel;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,5 +12,8 @@ namespace Common.Models
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
+
+        [DefaultValue(false)]
+        public bool CreateProductCapability { get; set; }
     }
 }
