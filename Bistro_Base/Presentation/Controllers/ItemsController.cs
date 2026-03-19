@@ -1,40 +1,59 @@
 ﻿using Common.Interfaces;
 using Common.Models;
 using Microsoft.AspNetCore.Mvc;
+using Presentation.ActionFilters;
 
 public class ItemsController : Controller
 {
     private readonly IItemsRepository _dbRepo;
 
+    // Simulated logged-in user (hardcoded)
+    private readonly string _currentUser;
+
+
     public ItemsController([FromKeyedServices("db")] IItemsRepository dbRepository)
     {
+        //_currentUser = "admin1@site.com"; // Change to "hana.owner@example.com" to simulate  "admin1@site.com"  luca.owner@example.com
         _dbRepo = dbRepository;
     }
 
-    // METHOD 1: DEFAULT CATALOGUE
-    public IActionResult Index(string viewType = "approved")
+    // INDEX: default approved restaurants
+    public IActionResult Index()
     {
         var allItems = _dbRepo.Get();
+        var currentUser = User.Identity.Name;
 
-        // Only restaurants
-        var restaurants = allItems.OfType<Restaurant>().ToList(); // CAST to Restaurant
+        List<IitemValidating> approvedRestaurants;
 
-        // Filter by viewType
-        var restaurantsToShow = viewType switch
+        if (currentUser == "admin1@site.com")
         {
-            "pending" => restaurants.Where(r => r.Status == null).ToList(),
-            _ => restaurants.Where(r => r.Status == true).ToList()
-        };
+            // Admin sees all approved restaurants
+            approvedRestaurants = allItems
+                .OfType<Restaurant>()
+                .Where(r => r.Status == true)
+                .Cast<IitemValidating>()
+                .ToList();
+        }
+        else
+        {
+            // Non-admin users see only their own approved restaurants
+            approvedRestaurants = allItems
+                .OfType<Restaurant>()
+                .Where(r => r.Status == true && r.OwnerEmailAddress == currentUser)
+                .Cast<IitemValidating>()
+                .ToList();
+        }
 
-        ViewData["viewType"] = viewType;
-        ViewData["simulateUser"] = "guest"; // or your simulated user
-
-        return View("catalogue", restaurantsToShow.Cast<IitemValidating>());
+        ViewData["viewType"] = "approved";
+        return View("catalogue", approvedRestaurants);
     }
 
 
-    // METHOD 2: DETAILS -> SHOW MENU ITEMS OF RESTAURANT
-    public IActionResult Details(Guid restaurantId, string simulateUser)
+
+
+
+    // DETAILS: menu items of a restaurant
+    public IActionResult Details(Guid restaurantId)
     {
         var items = _dbRepo.Get();
 
@@ -44,70 +63,62 @@ public class ItemsController : Controller
             .Cast<IitemValidating>()
             .ToList();
 
-        ViewData["simulateUser"] = simulateUser;
-
+        //ViewData["simulateUser"] = _currentUser;
         return View("catalogue", menuItems);
     }
 
-
-    // METHOD 3: PENDING (your existing method)
-    public IActionResult Pending(string simulateUser)
+    // VERIFICATION: shows pending depending on user
+    public IActionResult Verification()
     {
-        var allItems = _dbRepo.Get();
+        var currentUser = User.Identity.Name;
 
-        string currentUserEmail = simulateUser switch
+        List<IitemValidating> pendingToShow;
+
+        if (currentUser == "admin1@site.com")   // mario.owner @example.com
         {
-            "admin" => "admin1@site.com",
-            "owner1" => "luca.owner@example.com",
-            "owner2" => "hana.owner@example.com",
-            _ => "guest@site.com"
-        };
-
-        List<IitemValidating> pending = simulateUser switch
+            pendingToShow = _dbRepo.Get()
+                .OfType<Restaurant>()
+                .Where(r => r.Status == null)
+                .Cast<IitemValidating>()
+                .ToList();
+        }
+        else
         {
-            "admin" => allItems.OfType<Restaurant>()
-                               .Where(r => r.Status == null)
-                               .Cast<IitemValidating>()
-                               .ToList(),
-
-            "owner1" or "owner2" => allItems.OfType<MenuItem>()
-                                           .Where(m => m.Status == null &&
-                                                       m.Restaurant.OwnerEmailAddress == currentUserEmail)
-                                           .Cast<IitemValidating>()
-                                           .ToList(),
-
-            _ => new List<IitemValidating>()
-        };
-
-        ViewData["simulateUser"] = simulateUser;
-
-        return View("catalogue", pending);
-    }
-
-
-
-    [HttpPost]
-    public IActionResult UpdateStatusBulk(Guid[] selectedIds, string simulateUser)
-    {
-        if (selectedIds == null || selectedIds.Length == 0)
-            return RedirectToAction("Index", new { simulateUser });
-
-        // Get all items from repo
-        var allItems = _dbRepo.Get();
-
-        foreach (var item in allItems)
-        {
-            if (item is Restaurant r && selectedIds.Contains(r.Id))
-            {
-                r.Status = true; // Approve
-            }
+            pendingToShow = _dbRepo.Get()
+                .OfType<MenuItem>()
+                .Where(m => m.Status == null
+                           && m.Restaurant.OwnerEmailAddress == currentUser 
+                           && m.Restaurant.Status == true
+                         )
+                .Cast<IitemValidating>()
+                .ToList();
         }
 
-        _dbRepo.Save(allItems);
+        ViewData["viewType"] = "pending";
 
-        // Redirect to the same catalogue view
-        return RedirectToAction("Index", new { simulateUser });
+        return View("catalogue", pendingToShow);
     }
 
-}
 
+
+        // Approve selected restaurants or menu items
+    [HttpPost]
+    [ServiceFilter(typeof(ValidationFilter))]
+    public IActionResult ApproveStatus(Guid[] selectedIds)
+    {
+        var items = _dbRepo.Get();
+
+        foreach (var item in items)
+        {
+            if (item is Restaurant r && selectedIds.Contains(r.Id))
+                r.Status = true;
+
+            if (item is MenuItem m && selectedIds.Contains(m.Id))
+                m.Status = true;
+        }
+
+        _dbRepo.Save(items);
+
+        return RedirectToAction("Index");
+    }
+}

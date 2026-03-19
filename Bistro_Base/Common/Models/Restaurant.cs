@@ -31,14 +31,14 @@ namespace Common.Models
         public virtual ICollection<MenuItem> MenuItems { get; set; }
 
 
-        public ItemType GetCardPartial()
+        public string GetCardPartial()
         {
-            return ItemType.Restaurant;
+            return "_RestaurantPartial"; 
         }
 
-        public List<string> GetValidators()
+        public string GetValidators()
         {
-             return new List<string> {  "luca.owner@example.com", "hana.owner@example.com" };
+            return "admin1@site.com";
         }
     }
 }

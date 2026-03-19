@@ -12,44 +12,83 @@ public class ItemsDbRepository : IItemsRepository
         _context = context;
     }
 
-   
-
-
-
-
     public void Save(List<IitemValidating> items)
     {
         var restaurants = items.OfType<Restaurant>().ToList();
         var menuItems = items.OfType<MenuItem>().ToList();
 
+        // -------- RESTAURANTS --------
         foreach (var r in restaurants)
         {
-            r.ImagePath ??= "wwwroot/Images/restaurants/default.jpg";
+            var existing = _context.Restaurants
+                .FirstOrDefault(x => x.BistrobaseId == r.BistrobaseId);
 
-            if (_context.Restaurants.Any(x => x.Id == r.Id))
-                _context.Restaurants.Update(r);
-            else
+            if (existing == null)
+            {
+                r.Id = Guid.NewGuid();
+                r.Status = null;
                 _context.Restaurants.Add(r);
+            }
+            else
+            {
+                // Update all fields including Status
+                existing.Name = r.Name;
+                existing.Description = r.Description;
+                existing.OwnerEmailAddress = r.OwnerEmailAddress;
+                existing.Address = r.Address;
+                existing.Phone = r.Phone;
+                existing.ImagePath = r.ImagePath;
+                existing.Status = r.Status;  // <-- update approval status
+            }
         }
 
+        _context.SaveChanges(); // commit restaurants first
+
+        // -------- MENU ITEMS --------
         foreach (var m in menuItems)
         {
-            m.ImagePath ??= "wwwroot/Images/menuitems/default.jpg";
+            // Map to correct DB restaurant
+            var dbRestaurant = _context.Restaurants
+                                       .FirstOrDefault(r => r.BistrobaseId == m.Restaurant.BistrobaseId);
+            if (dbRestaurant == null) continue; // skip orphan menu items
 
-            if (_context.MenuItems.Any(x => x.Id == m.Id))
-                _context.MenuItems.Update(m);
-            else
+            m.RestaurantId = dbRestaurant.Id;
+
+            var existing = _context.MenuItems
+                .FirstOrDefault(x => x.BistrobaseId == m.BistrobaseId);
+
+            if (existing == null)
+            {
+                m.Id = Guid.NewGuid();
+                m.Status = null;
                 _context.MenuItems.Add(m);
+            }
+            else
+            {
+                existing.Title = m.Title;
+                existing.Price = m.Price;
+                existing.Currency = m.Currency;
+                existing.ImagePath = m.ImagePath;
+                existing.RestaurantId = m.RestaurantId;
+                existing.Status = m.Status; // <-- update approval status
+            }
         }
 
-        _context.SaveChanges();
+        _context.SaveChanges(); // commit menu items
     }
-
 
     public List<IitemValidating> Get()
     {
-        var restaurants = _context.Restaurants.Include(r => r.MenuItems).Cast<IitemValidating>().ToList();
-        var menuItems = _context.MenuItems.Include(m => m.Restaurant).Cast<IitemValidating>().ToList();
+        var restaurants = _context.Restaurants
+            .Include(r => r.MenuItems)
+            .Cast<IitemValidating>()
+            .ToList();
+
+        var menuItems = _context.MenuItems
+            .Include(m => m.Restaurant)
+            .Cast<IitemValidating>()
+            .ToList();
+
         return restaurants.Concat(menuItems).ToList();
     }
 }

@@ -5,6 +5,7 @@ using DataAccess.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Presentation;
+using Presentation.ActionFilters;
 using System;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,7 +28,7 @@ builder.Services.AddKeyedScoped<IItemsRepository, ItemsMemoryRepository>("cache"
 
 
 
-
+builder .Services.AddScoped<ValidationFilter>();
 
 var app = builder.Build();
 

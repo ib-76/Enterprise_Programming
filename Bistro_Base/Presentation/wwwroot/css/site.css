@@ -1,22 +1,64 @@
-html {
-  font-size: 14px;
-}
-
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+﻿/* -------------------------
+   Full height flex layout
+-------------------------- */
+html, body {
+    height: 100%;
+    margin: 0;
 }
 
 body {
-  margin-bottom: 60px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
+
+/* Main content grows to push footer down */
+main {
+    flex: 1 0 auto;
+    display: flex;
+    justify-content: center;
+}
+
+/* Content wrapper for side borders */
+.content-wrapper {
+    width: 100%;
+    max-width: 1140px;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* -------------------------
+   Footer styling
+-------------------------- */
+footer {
+    flex-shrink: 0;
+    background: white; /* solid footer, no blur */
+    padding: 12px 0;
+}
+
+/* -------------------------
+   Background image
+-------------------------- */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('/images/restint.jpg') no-repeat center center;
+    background-size: cover;
+    opacity: 0.3;
+    z-index: -1;
+}
+
+/* -------------------------
+   Tables: all rows white
+-------------------------- */
+table {
+    background-color: white;
+}
+
+    table th, table td {
+        background-color: white; /* ensures headers and cells are white */
+    }

@@ -28,15 +28,14 @@ namespace Common.Models
         public virtual required Restaurant Restaurant { get; set; } // Navigation property
 
 
-
-        public ItemType GetCardPartial()
+        public string GetCardPartial()
         {
-            return ItemType.MenuItem;
+            return "_MenuItemPartial";
         }
 
-        public List<string> GetValidators()
+        public string GetValidators()
         {
-            return new List<string> { "admin1@site.com", "admin2@site.com" };
+            return Restaurant.OwnerEmailAddress;
         }
     }
 }

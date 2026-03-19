@@ -9,6 +9,8 @@ using System.Reflection.Metadata.Ecma335;
 using Common.Models;
 using DataAccess.Factory;
 using Presentation.ActionFilters;
+using Serilog;
+using Serilog.Events;
 
 
 
@@ -71,6 +73,14 @@ switch (implementationChoice)
 //Inject Implementation A AND B
 //Ex1
 builder.Services.AddKeyedScoped<IOrdersRepository, OrdersRepository>("db");
+// Decorator
+builder.Services.AddKeyedScoped<IOrdersRepository>("logging", (provider, key) =>
+{
+    var inner = provider.GetRequiredKeyedService<IOrdersRepository>("db");
+    var logger = provider.GetRequiredService<ILogger<LoggingOrdersRepository>>();
+
+    return new LoggingOrdersRepository(inner, logger);
+});
 builder.Services.AddKeyedScoped<IOrdersRepository, OrdersCacheRepository>("cache");
 //Ex2
 builder.Services.AddKeyedScoped<IPriceCalculation, VatCalculation>("vat");
@@ -80,6 +90,19 @@ builder.Services.AddKeyedScoped<IPriceCalculation, BlackFridayCalculation>("blac
 
 builder.Services.AddScoped<ProductCreateValidationFilter>();
 
+
+string logAbsolutePath = host.ContentRootPath + "\\logs.txt";
+
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+    .MinimumLevel.Override("System", LogEventLevel.Warning)
+    .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
+    .WriteTo.File(logAbsolutePath,
+       LogEventLevel.Information, rollingInterval: RollingInterval.Day
+    ).CreateLogger();
+
+builder.Host.UseSerilog();
 
 
 var app = builder.Build();

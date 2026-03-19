@@ -1,0 +1,52 @@
+﻿@model Common.Models.Restaurant
+
+<div class="card m-2 shadow" style="width:22rem;">
+    <img src="~/@Model.ImagePath.Replace("wwwroot/", "")"
+         class="card-img-top"
+         style="height:180px; object-fit:cover;" />
+
+    <div class="card-body">
+        <h5 class="card-title">@Model.Name</h5>
+        <p>@Model.Description</p>
+
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item"><b>Owner Email:</b> <br/> @Model.OwnerEmailAddress</li>
+            <li class="list-group-item"><b>Address:</b><br/> @Model.Address</li>
+            <li class="list-group-item"><b>Phone:</b> <br/>@Model.Phone</li>
+        </ul>
+
+        <p class="mt-2">
+            <b>Status:</b>
+            @if (Model.Status == true)
+            {
+                <i class="text-success">Approved</i>
+            }
+            else
+            {
+                <i class="text-danger">Pending</i>
+            }
+        </p>
+
+        <!-- Only show checkbox if pending -->
+        @if (Model.Status == null)
+        {
+            <div class="form-check mb-2">
+                <input type="checkbox" name="selectedIds"
+                       value="@Model.Id"
+                       class="form-check-input" />
+                <label class="form-check-label">Select for approval</label>
+            </div>
+        }
+
+        <!-- View Menu only if approved -->
+        @if (Model.Status == true)
+        {
+            <a asp-action="Details"
+               asp-route-restaurantId="@Model.Id"
+               asp-route-simulateUser="@ViewData["simulateUser"]"
+               class="btn btn-dark w-100 mt-2">
+                View Menu
+            </a>
+        }
+    </div>
+</div>

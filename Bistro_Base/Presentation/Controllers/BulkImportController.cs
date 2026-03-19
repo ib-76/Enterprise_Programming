@@ -3,6 +3,7 @@ using Common.Models;
 using DataAccess.Repositories;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Presentation.ActionFilters;
 using Services.Factories;
 using System.IO.Compression;
 
@@ -24,6 +25,7 @@ namespace Presentation.Controllers
 
 
         [HttpGet]
+       
         public IActionResult Import()
         {
             var items = _memoryRepo.Get();
@@ -34,6 +36,7 @@ namespace Presentation.Controllers
 
         
         [HttpPost]
+        [ServiceFilter(typeof(ValidationFilter))]
         public IActionResult Import(IFormFile file)
         {
             if (file == null || file.Length == 0)
@@ -65,13 +68,20 @@ namespace Presentation.Controllers
             if (!System.IO.File.Exists(defaultImagePath))
                 return BadRequest("Default image not found.");
 
+            // ✅ Ensure folders exist on disk (optional, safety)
+            Directory.CreateDirectory(Path.Combine(env.WebRootPath, "Images", "menuitems"));
+            Directory.CreateDirectory(Path.Combine(env.WebRootPath, "Images", "restaurants"));
+
             using var memoryStream = new MemoryStream();
 
             using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
             {
                 foreach (var item in items)
                 {
-                    var entryPath = $"item-{item.BistrobaseId}/default.jpg";
+                    // Use Path.Combine style for entry folder inside ZIP
+                    var folderName = $"item-{item.BistrobaseId}";
+                    var entryPath = Path.Combine(folderName, "default.jpg").Replace("\\", "/");
+
                     var entry = archive.CreateEntry(entryPath);
 
                     using var entryStream = entry.Open();
@@ -88,9 +98,11 @@ namespace Presentation.Controllers
 
 
 
+
+
         [HttpPost]
-        public IActionResult UploadZip(
-            IFormFile zipfile,[FromServices] IWebHostEnvironment host)
+        [ServiceFilter(typeof(ValidationFilter))]
+        public IActionResult UploadZip(IFormFile zipfile, [FromServices] IWebHostEnvironment host)
         {
             if (zipfile == null || zipfile.Length == 0) return BadRequest("No file uploaded");
 
@@ -122,9 +134,11 @@ namespace Presentation.Controllers
                 }
             }
 
-           _dbRepo.Save(_memoryRepo.Get());
+            _dbRepo.Save(_memoryRepo.Get());
             return RedirectToAction("Import");
         }
+
+
 
         private void SetImagePath(string bistroId, string fileName,
             [FromKeyedServices("cache")] IItemsRepository memoryRepo // method injection

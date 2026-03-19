@@ -12,7 +12,7 @@ namespace Common.Interfaces
     {
         string BistrobaseId { get; }
 
-        List<string> GetValidators();
-        ItemType GetCardPartial();
+        String GetValidators();
+        String GetCardPartial();
     }
 }

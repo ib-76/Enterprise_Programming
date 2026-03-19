@@ -1,0 +1,23 @@
+﻿<tr>
+    <td style="width:120px">
+        <img src="~/@Model.ImagePath.Replace("wwwroot/", "")"
+             alt="@Model.Title"
+             style="width:100px;height:100px;object-fit:cover;border-radius:5px;">
+    </td>
+
+    <td>@Model.Title</td>
+    <td>@Model.Price.ToString("0.00")</td>
+    <td>@Model.Currency</td>
+    <td>@Model.Restaurant.Name</td>
+
+    <td>
+        @if (Model.Status == null)
+        {
+            <input type="checkbox" name="selectedIds" value="@Model.Id" />
+        }
+        else if (Model.Status == true)
+        {
+            <i>Approved</i>
+        }
+    </td>
+</tr>
